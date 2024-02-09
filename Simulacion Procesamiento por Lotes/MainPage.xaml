@@ -39,6 +39,30 @@
             <Button x:Name="BtnEjecutar"
                     Text="Ejecutar"
                     Clicked="BtnEjecutar_Clicked"/>
+            <HorizontalStackLayout>
+                <VerticalStackLayout>
+                    <Label Text="Procesos Pendientes"/>
+                    <ListView x:Name="ListPendings"
+                              ItemTapped="ListPendings_ItemTapped"
+                              ItemDisappearing="ListPendings_ItemDisappearing">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextCell Text="{Binding Id}"
+                                          Detail="{Binding Instruccion}"/>
+                            </DataTemplate>
+                        
+                        </ListView.ItemTemplate>
+                        
+                    </ListView>
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <Label Text="Ejecutando:"/>
+                    <Label x:Name="LblId"/>
+                    <Label x:Name="LblInstruccion"/>
+                    <Label x:Name="LblTME"/>
+                    <Label x:Name="LblProgramador"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
 
 
 
