@@ -1,0 +1,46 @@
+﻿namespace Simulacion_Procesamiento_por_Lotes.Models
+{
+    public class Lote
+    {
+        private readonly int _capacidadMax;
+        private int _procesosActuales;
+        private readonly List<Proceso> _procesos;
+        
+        public Lote(int size)
+        {
+            _capacidadMax = size;
+            _procesos = new(size);
+            _procesosActuales = 0;
+        }
+
+        //add proceso
+        public bool Add(Proceso proceso)
+        {
+            if(_procesosActuales < _capacidadMax)
+            {
+                _procesos.Add(proceso);
+                _procesosActuales += 1;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public Proceso? TakeLast()
+        {
+            if (_procesosActuales == 0)
+                return null;
+            _procesosActuales -= 1;
+            return _procesos[-1];
+        }
+
+        //overload to validate if lote is empty
+        public static implicit operator bool(Lote lote)
+        {
+            return lote._procesosActuales < lote._capacidadMax;
+        }
+
+    }
+}
