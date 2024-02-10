@@ -50,7 +50,7 @@
         //overload to validate if lote is empty
         public static implicit operator bool(Lote lote)
         {
-            return lote._procesosActuales < lote._capacidadMax;
+            return lote._procesosActuales != 0;
         }
 
     }

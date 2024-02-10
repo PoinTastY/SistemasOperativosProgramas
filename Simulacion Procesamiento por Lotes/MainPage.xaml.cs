@@ -1,13 +1,18 @@
 ﻿using Simulacion_Procesamiento_por_Lotes.Models;
 using System.Collections.ObjectModel;
 
+
 namespace Simulacion_Procesamiento_por_Lotes
 {
     public partial class MainPage : ContentPage
     {
-        ObservableCollection<Lote> lotes = new();
-        Proceso proceso;
-        List<string> programadores = new()
+
+        private TimeOnly RelojGlobal = new();
+        private List<Lote> lotes = new();
+        ObservableCollection<Proceso> procesosTerminados = new();
+        ObservableCollection<Proceso> procesosPendientes = new();
+
+        private List<string> programadores = new()
         {
             "Kevin",
             "Lucas",
@@ -17,6 +22,7 @@ namespace Simulacion_Procesamiento_por_Lotes
             "Ninfa",
             "Caliope"
         };
+        
 
         public MainPage()
         {
@@ -26,9 +32,8 @@ namespace Simulacion_Procesamiento_por_Lotes
             LabelMinTme.Text = string.Format("TME minimo: {0}", StepperMinTme.Value);
             LabelMaxTme.Text = string.Format("TME maximo: {0}", StepperMaxTme.Value);
             LabelTotalProcesos.Text = string.Format("Total de Procesos: {0}", StepperTotalProcesos.Value);
-            
-            //lists
-
+            ListFinished.ItemsSource = procesosTerminados;
+            ListPendings.ItemsSource = procesosPendientes;
         }
 
         private void BtnEjecutar_Clicked(object sender, EventArgs e)
@@ -88,28 +93,41 @@ namespace Simulacion_Procesamiento_por_Lotes
                     lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(7)]));
                 }
             }
-            await DisplayAlert("Preparado","Todos los lotes listos", "Ok");
-            for(int j = 0; j < lotes.Count; j++)
+            //start the timer
+            foreach (var lote in lotes)
             {
-                ListPendings.ItemsSource = lotes[j].Procesos;
-                while (lotes[j].Procesos.Count > 0)
+                while (lote)
                 {
-                    //throw to excecute it
-                    Ejecutar(lotes[j].TakeFirst());
-                } 
-
+                    Proceso chamba = lote.TakeFirst();
+                    procesosPendientes.Remove(chamba);
+                    while (chamba.Tme >= 0)
+                    {
+                        RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
+                        if(chamba != null)
+                            Ejecucion(chamba);
+                        await Task.Delay(TimeSpan.FromSeconds(1));
+                    }
+                }
             }
         }
 
-        //ejecutar proceso
-        private void Ejecutar(Proceso chamba)
+        private void Ejecucion(Proceso chamba)
         {
-            if (chamba == null)
-                return; 
-            LblId.Text = "( " + chamba.Id.ToString() + " )";
-            LblInstruccion.Text = chamba.Instruccion;
-            LblTME.Text = "TME: " + chamba.Tme.ToString();
+            LblRelojGlobal.Text = $"Reloj global:{RelojGlobal.Minute}:{RelojGlobal.Second:00}";
+            LblId.Text = chamba.Id.ToString();
+            LblInstruccion.Text = "Instruccion: " + chamba.Instruccion;
+            LblProgramador.Text = "Programador: " + chamba.Programador;
+            LblTME.Text = "TME restante: " + chamba.Tme--.ToString();
+            if (chamba.Tme == 0)
+                Finalizados(chamba);
         }
+        private void Finalizados(Proceso chamba)
+        {
+            procesosTerminados.Add(chamba);
+        }
+
+        //evento de timer
+        
 
 
         //generate more random stuff
@@ -125,9 +143,19 @@ namespace Simulacion_Procesamiento_por_Lotes
             ListPendings.SelectedItem = null;
         }
 
-        private void ListPendings_ItemDisappearing(object sender, ItemVisibilityEventArgs e)
+        private void ListPendings_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
 
+        }
+
+        private void ListFinished_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+
+        }
+
+        private void ListFinished_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            ListFinished.SelectedItem = null;
         }
     }
 

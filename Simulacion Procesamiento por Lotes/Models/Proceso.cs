@@ -3,7 +3,7 @@
     public class Proceso
     {
         private readonly int _id;
-        private readonly int _tme;
+        private int _tme;
         private string _instruccion;
         private readonly float? _resultado;
         private readonly string _programador;
@@ -16,13 +16,15 @@
             _resultado = Procesamiento();
         }
 
+        public Proceso() { }
+
         //get attributes
 
         //returns id
         public int Id { get => _id; }
 
         //returns TME
-        public int Tme { get => _tme; }
+        public int Tme { get => _tme; set => _tme = value; }
 
         //returns Instruccion
         public string Instruccion { get => _instruccion; }

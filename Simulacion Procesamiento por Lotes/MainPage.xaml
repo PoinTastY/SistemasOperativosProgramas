@@ -34,6 +34,7 @@
                              Value="8"
                              ValueChanged="StepperTotalProcesos_ValueChanged"/>
                 </VerticalStackLayout>
+                <Label x:Name="LblRelojGlobal"/>
 
             </HorizontalStackLayout>
             <Button x:Name="BtnEjecutar"
@@ -43,8 +44,8 @@
                 <VerticalStackLayout>
                     <Label Text="Procesos Pendientes"/>
                     <ListView x:Name="ListPendings"
-                              ItemTapped="ListPendings_ItemTapped"
-                              ItemDisappearing="ListPendings_ItemDisappearing">
+                              ItemSelected="ListPendings_ItemSelected"
+                              ItemTapped="ListPendings_ItemTapped">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <TextCell Text="{Binding Id}"
@@ -61,6 +62,20 @@
                     <Label x:Name="LblInstruccion"/>
                     <Label x:Name="LblTME"/>
                     <Label x:Name="LblProgramador"/>
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <Label Text="Terminados"/>
+                    <ListView x:Name="ListFinished"
+                              ItemSelected="ListFinished_ItemSelected"
+                              ItemTapped="ListFinished_ItemTapped">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextCell Text="{Binding Id}"
+                                          Detail="{Binding Instruccion}"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                              
                 </VerticalStackLayout>
             </HorizontalStackLayout>
 
