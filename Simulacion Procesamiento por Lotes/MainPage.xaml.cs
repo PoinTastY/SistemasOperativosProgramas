@@ -50,7 +50,6 @@ namespace Simulacion_Procesamiento_por_Lotes
             StepperMaxTme.IsEnabled = false;
             StepperTotalProcesos.IsEnabled = false;
             BtnEjecutar.IsEnabled = false;
-            BtnEjecutar.IsVisible = false;
             Run();
         }
 
@@ -236,8 +235,7 @@ TME: {chamba.Tme}
             StepperMaxTme.IsEnabled = true;
             StepperTotalProcesos.IsEnabled = true;
             BtnEjecutar.IsEnabled = true;
-            BtnEjecutar.IsVisible = true;
-            EnableButtons(false);
+            EnableButtons(false);t 
             procesosPendientes.Clear();
             procesosTerminados.Clear();
             LblRelojGlobal.Text = string.Empty;
