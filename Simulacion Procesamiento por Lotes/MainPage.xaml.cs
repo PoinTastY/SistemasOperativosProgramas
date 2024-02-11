@@ -6,11 +6,14 @@ namespace Simulacion_Procesamiento_por_Lotes
 {
     public partial class MainPage : ContentPage
     {
+        //generate path to export results
+        private readonly static string _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Resultados Simulacion");
+        private string resultados;
 
         private TimeOnly RelojGlobal = new();
         private List<Lote> lotes = new();
-        ObservableCollection<Proceso> procesosTerminados = new();
-        ObservableCollection<Proceso> procesosPendientes = new();
+        public ObservableCollection<Proceso> procesosTerminados = new();
+        public ObservableCollection<Proceso> procesosPendientes = new();
 
         private List<string> programadores = new()
         {
@@ -35,8 +38,9 @@ namespace Simulacion_Procesamiento_por_Lotes
             LabelMinTme.Text = string.Format("TME minimo: {0}", StepperMinTme.Value);
             LabelMaxTme.Text = string.Format("TME maximo: {0}", StepperMaxTme.Value);
             LabelTotalProcesos.Text = string.Format("Total de Procesos: {0}", StepperTotalProcesos.Value);
-            ListFinished.ItemsSource = procesosTerminados;
             ListPendings.ItemsSource = procesosPendientes;
+            ListFinished.ItemsSource = procesosTerminados;
+            
         }
 
         private void BtnEjecutar_Clicked(object sender, EventArgs e)
@@ -84,6 +88,7 @@ namespace Simulacion_Procesamiento_por_Lotes
         }
         private async void Run()
         {
+            FrameGlock.IsVisible = true;
             //initialize every lote needed basing on settings
             lotes.Add(new Lote(((int)StepperSizeLote.Value)));
             int indexLote = 0;
@@ -124,23 +129,43 @@ namespace Simulacion_Procesamiento_por_Lotes
                 if(totallotes != 0)
                 {
                     LblLotesFaltantes.Text = "Lotes Faltantes: " + --totallotes;
-                    LblId.Text = null;
-                    LblInstruccion.Text = null;
-                    LblProgramador.Text = null;
-                    LblTME.Text = null;
+                }
+                else
+                {
+                    LblId.Text = "-";
+                    LblInstruccion.Text = "-";
+                    LblProgramador.Text = "-";
+                    LblTME.Text = "-";
                 }
             }
+            resultados += $"\n\nTiempo total de ejecucion: {RelojGlobal.Minute}:{RelojGlobal.Second:00}\n";
+            EnableButtons(true);
+
+        }
+
+        private void EnableButtons(bool x)
+        {
+            BtnExportResults.IsEnabled = x;
+            BtnRerun.IsEnabled = x;
         }
 
         private void Ejecucion(Proceso chamba)
         {
-            LblRelojGlobal.Text = $"Reloj global:{RelojGlobal.Minute}:{RelojGlobal.Second:00}";
-            LblId.Text = chamba.Id.ToString();
+            LblRelojGlobal.Text = $"Reloj Global:{RelojGlobal.Minute}:{RelojGlobal.Second:00}";
+            LblId.Text = "Proceso: " + chamba.Id.ToString();
             LblInstruccion.Text = "Instruccion: " + chamba.Instruccion;
             LblProgramador.Text = "Programador: " + chamba.Programador;
             chamba.Tme--;
             LblTME.Text = "TME restante: " + chamba.Tme.ToString();
-            
+            if(chamba.Tme == 0)
+                resultados += @$"
+Reloj Golbal: {RelojGlobal.Minute}:{RelojGlobal.Second:00}
+Proceso: {chamba.Id}
+Instruccion: {chamba.Instruccion}
+Resultado: {chamba.Resultado}
+Programador: {chamba.Programador}
+TME: {chamba.Tme}
+";
         }
         private void Finalizados(Proceso chamba)
         {
@@ -178,6 +203,46 @@ namespace Simulacion_Procesamiento_por_Lotes
         {
             ListFinished.SelectedItem = null;
         }
-    }
 
+        private async  void BtnExportResults_Clicked(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(_path))
+            {
+                Directory.CreateDirectory(_path);
+            }
+            string ruta = _path + @"\Resultados.txt";
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(ruta, append : true))
+                {
+                    // Se escribe el contenido en el archivo
+                    writer.WriteLine($"{DateTime.Now:G}\n" + resultados);
+                }
+
+                await DisplayAlert("Exito", "Se han exportado los Resultados.", "Ok");
+                BtnExportResults.IsEnabled = false;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Se han exportado los Resultados:\n{ex}", "Ok");
+                BtnExportResults.IsEnabled = false;
+            }
+        }
+
+        private void BtnRerun_Clicked(object sender, EventArgs e)
+        {
+            StepperSizeLote.IsEnabled = true;
+            StepperMinTme.IsEnabled = true;
+            StepperMaxTme.IsEnabled = true;
+            StepperTotalProcesos.IsEnabled = true;
+            BtnEjecutar.IsEnabled = true;
+            BtnEjecutar.IsVisible = true;
+            EnableButtons(false);
+            procesosPendientes.Clear();
+            procesosTerminados.Clear();
+            LblRelojGlobal.Text = string.Empty;
+            FrameGlock.IsVisible = false;
+
+        }
+    }
 }

@@ -1,15 +1,19 @@
-﻿namespace Simulacion_Procesamiento_por_Lotes.Models
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
+
+namespace Simulacion_Procesamiento_por_Lotes.Models
 {
-    public class Lote
+    public partial class Lote : ObservableObject
     {
         private readonly int _capacidadMax;
         private int _procesosActuales;
-        private readonly List<Proceso> _procesos;
+        [ObservableProperty]
+        private ObservableCollection<Proceso> _procesos;
 
         public Lote(int size)
         {
             _capacidadMax = size;
-            _procesos = new(size);
+            _procesos = new();
             _procesosActuales = 0;
         }
 
@@ -18,7 +22,7 @@
         {
             if (_procesosActuales < _capacidadMax)
             {
-                _procesos.Add(proceso);
+                Procesos.Add(proceso);
                 _procesosActuales += 1;
                 return true;
             }
@@ -32,12 +36,11 @@
         {
             _procesosActuales--;
             // Si hay procesos restantes en la lista:
-            Proceso primerProceso = _procesos[0]; // Tomar el primer proceso
-            _procesos.RemoveAt(0); // Eliminar el primer proceso de la lista
+            Proceso primerProceso = Procesos[0]; // Tomar el primer proceso
+            Procesos.RemoveAt(0); // Eliminar el primer proceso de la lista
             return primerProceso; // Elimina y devuelve el primer proceso
         }
 
-        public List<Proceso> Procesos {get => _procesos; }
 
         //overload to validate if lote is empty
         public static implicit operator bool(Lote lote)

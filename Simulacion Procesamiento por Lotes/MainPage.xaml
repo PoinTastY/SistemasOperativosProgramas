@@ -1,96 +1,146 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Simulacion_Procesamiento_por_Lotes.MainPage">
+             x:Class="Simulacion_Procesamiento_por_Lotes.MainPage"
+             xmlns:model="clr-namespace:Simulacion_Procesamiento_por_Lotes.Models"
+             Title="Simulacion Procesamiento por Lotes :P">
 
-    <ScrollView>
+    <FlexLayout>
         <VerticalStackLayout
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
-            <HorizontalStackLayout>
-                <VerticalStackLayout IsEnabled="True" x:Name="Settings">
-                    <Label x:Name="LabelSizeLote"/>
-                    <Stepper x:Name="StepperSizeLote"
-                             Value="5"
-                             ValueChanged="StepperSizeLote_ValueChanged"/>
+            <Frame>
+                <HorizontalStackLayout Padding="15">
+                    <VerticalStackLayout Spacing="10" Padding="10">
+                        <Label x:Name="LabelSizeLote"/>
+                        <Stepper x:Name="StepperSizeLote"
+                                 Value="5"
+                                 ValueChanged="StepperSizeLote_ValueChanged"/>
 
-                </VerticalStackLayout>
-                <VerticalStackLayout>
-                    <Label x:Name="LabelMinTme"/>
-                    <Stepper x:Name="StepperMinTme"
-                             Value="5"
-                             ValueChanged="StepperMinTme_ValueChanged"/>
-                </VerticalStackLayout>
-                <VerticalStackLayout>
-                    <Label x:Name="LabelMaxTme"/>
-                    <Stepper x:Name="StepperMaxTme"
-                             Value="13"
-                             ValueChanged="StepperMaxTme_ValueChanged"/>
-                </VerticalStackLayout>
-                <VerticalStackLayout>
-                    <Label x:Name="LabelTotalProcesos"/>
-                    <Stepper x:Name="StepperTotalProcesos"
-                             Value="8"
-                             ValueChanged="StepperTotalProcesos_ValueChanged"/>
-                </VerticalStackLayout>
-                <Label x:Name="LblRelojGlobal"/>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="10" Padding="10">
+                        <Label x:Name="LabelMinTme"/>
+                        <Stepper x:Name="StepperMinTme"
+                                 Value="5"
+                                 ValueChanged="StepperMinTme_ValueChanged"/>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="10" Padding="10">
+                        <Label x:Name="LabelMaxTme"/>
+                        <Stepper x:Name="StepperMaxTme"
+                                 Value="13"
+                                 ValueChanged="StepperMaxTme_ValueChanged"/>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="10" Padding="10">
+                        <Label x:Name="LabelTotalProcesos"/>
+                        <Stepper x:Name="StepperTotalProcesos"
+                                 Value="8"
+                                 ValueChanged="StepperTotalProcesos_ValueChanged"/>
+                    </VerticalStackLayout>
 
-            </HorizontalStackLayout>
+                    <Frame BackgroundColor="MediumPurple" x:Name="FrameGlock" IsVisible="false">
+                        <Label x:Name="LblRelojGlobal" FontSize="Title" MinimumWidthRequest="230"/>
+                    </Frame>
+                    
+                </HorizontalStackLayout>
+            </Frame>
+
             <Button x:Name="BtnEjecutar"
                     Text="Ejecutar"
                     Clicked="BtnEjecutar_Clicked"/>
             <HorizontalStackLayout>
-                <VerticalStackLayout>
-                    <Label Text="Procesos Pendientes"/>
-                    <ListView x:Name="ListPendings"
-                              ItemSelected="ListPendings_ItemSelected"
-                              ItemTapped="ListPendings_ItemTapped">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <ViewCell>
-                                    <VerticalStackLayout>
-                                        <Label Text="{Binding Id}"/>
-                                        <Label Text="{Binding Instruccion}"/>
-                                        <Label Text="{Binding Programador}"/>
-                                        <Label Text="{Binding TmeOriginal}"/>
+                <Frame BackgroundColor="LightCyan">
+                    <VerticalStackLayout>
+                        <Label Text="Procesos Pendientes"/>
+                        <Frame>
+                            <ListView x:Name="ListPendings"
+                                      ItemSelected="ListPendings_ItemSelected"
+                                      ItemTapped="ListPendings_ItemTapped"
+                                      HorizontalOptions="FillAndExpand"
+                                      MaximumHeightRequest="333"
+                                      MinimumHeightRequest="333"
+                                      MinimumWidthRequest="250">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate >
+                                        <ViewCell>
+                                            <VerticalStackLayout Padding="15" HorizontalOptions="Center" VerticalOptions="Center">
+                                                <Label Text="{Binding Id, StringFormat='Proceso: {0}'}"/>
+                                                <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
+                                                <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
+                                                <Label Text="{Binding Tme, StringFormat='TME: {0}'}"/>
+                                            </VerticalStackLayout>
+                                        </ViewCell>
+                                    </DataTemplate>
+                        
+                                </ListView.ItemTemplate>
+                        
+                            </ListView>
+                        </Frame>
+                        <Label x:Name="LblLotesFaltantes"/>
+                    </VerticalStackLayout>
+                </Frame>
+                <VerticalStackLayout Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" MinimumWidthRequest="200" MinimumHeightRequest="200">
+                    <Frame VerticalOptions="Center" BackgroundColor="Pink" MinimumHeightRequest="250">
+                        <StackLayout>
+                            <Label Text="Ejecutando:"/>
+                            <Frame>
+                                <StackLayout>
+                                    <Label x:Name="LblId"/>
+                                    <Label x:Name="LblInstruccion"/>
+                                    <Label x:Name="LblTME"/>
+                                    <Label x:Name="LblProgramador"/>
+                                </StackLayout>
+                            </Frame>
 
-                                    </VerticalStackLayout>
-                                </ViewCell>
-                            </DataTemplate>
-                        
-                        </ListView.ItemTemplate>
-                        
-                    </ListView>
-                    <Label x:Name="LblLotesFaltantes"/>
+                        </StackLayout>
+                    </Frame>
+                    <VerticalStackLayout VerticalOptions="EndAndExpand">
+                        <Button Text="Generar Resultados"
+                                x:Name="BtnExportResults"
+                                Clicked="BtnExportResults_Clicked"
+                                IsEnabled="False"/>
+                        <Button Text="Reiniciar"
+                                x:Name="BtnRerun"
+                                IsEnabled="False"
+                                Clicked="BtnRerun_Clicked"/>
+                    </VerticalStackLayout>
+
                 </VerticalStackLayout>
-                <VerticalStackLayout>
-                    <Label Text="Ejecutando:"/>
-                    <Label x:Name="LblId"/>
-                    <Label x:Name="LblInstruccion"/>
-                    <Label x:Name="LblTME"/>
-                    <Label x:Name="LblProgramador"/>
-                </VerticalStackLayout>
-                <VerticalStackLayout>
-                    <Label Text="Terminados"/>
-                    <ListView x:Name="ListFinished"
-                              ItemSelected="ListFinished_ItemSelected"
-                              ItemTapped="ListFinished_ItemTapped">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <TextCell Text="{Binding Id}"
-                                          Detail="{Binding Instruccion}"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                              
-                </VerticalStackLayout>
+                <Frame>
+                    <VerticalStackLayout>
+                        <Label Text="Terminados"/>
+                        <Frame>
+                            <ListView x:Name="ListFinished"
+                                      ItemSelected="ListFinished_ItemSelected"
+                                      ItemTapped="ListFinished_ItemTapped"
+                                      HorizontalOptions="FillAndExpand"
+                                      MaximumHeightRequest="333"
+                                      MinimumHeightRequest="333"
+                                      MinimumWidthRequest="250">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <ViewCell>
+                                            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="15">
+                                                <Label Text="{Binding Id, StringFormat='Proceso: {0}'}"/>
+                                                <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
+                                                <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
+                                                <Label Text="{Binding Tmeoriginal, StringFormat='TME: {0}'}"/>
+
+                                            </VerticalStackLayout>
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+
             </HorizontalStackLayout>
 
 
 
 
         </VerticalStackLayout>
-    </ScrollView>
+    </FlexLayout>
 
 </ContentPage>
