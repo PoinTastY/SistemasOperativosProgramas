@@ -9,6 +9,7 @@ namespace Simulacion_Procesamiento_por_Lotes
         //generate path to export results
         private readonly static string _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Resultados Simulacion");
         private string resultados;
+        private bool ticking = true;
 
         private TimeOnly RelojGlobal = new();
         private List<Lote> lotes = new();
@@ -43,6 +44,7 @@ namespace Simulacion_Procesamiento_por_Lotes
             
         }
 
+
         private void BtnEjecutar_Clicked(object sender, EventArgs e)
         {
             StepperSizeLote.IsEnabled = false;
@@ -50,6 +52,8 @@ namespace Simulacion_Procesamiento_por_Lotes
             StepperMaxTme.IsEnabled = false;
             StepperTotalProcesos.IsEnabled = false;
             BtnEjecutar.IsEnabled = false;
+            BtnStop.IsEnabled = true;
+            ticking = true;
             Run();
         }
 
@@ -85,6 +89,7 @@ namespace Simulacion_Procesamiento_por_Lotes
         {
             LabelTotalProcesos.Text = string.Format("Total de Procesos: {0}", e.NewValue);
         }
+
         private async void Run()
         {
             FrameGlock.IsVisible = true;
@@ -114,13 +119,15 @@ namespace Simulacion_Procesamiento_por_Lotes
                     {
                         procesosPendientes.Add(proceso);
                     }
-                    while (chamba.Tme > 0)
+                    while (chamba.Tme > 0 && ticking)
                     {
-                        if (chamba.Tme >= 0)
+                        if (chamba.Tme >= 0 && ticking)
                             Ejecucion(chamba);
                         RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
                         await Task.Delay(TimeSpan.FromSeconds(1));
                     }
+                    if (!ticking)
+                        return;
                     Finalizados(chamba);
                     procesosPendientes.Clear();
                     
@@ -138,6 +145,7 @@ namespace Simulacion_Procesamiento_por_Lotes
                 }
             }
             resultados += $"\n\nTiempo total de ejecucion: {RelojGlobal.Minute}:{RelojGlobal.Second:00}\n";
+            BtnStop.IsEnabled = false;
             EnableButtons(true);
 
         }
@@ -235,12 +243,23 @@ TME: {chamba.Tme}
             StepperMaxTme.IsEnabled = true;
             StepperTotalProcesos.IsEnabled = true;
             BtnEjecutar.IsEnabled = true;
-            EnableButtons(false);t 
+            EnableButtons(false);
             procesosPendientes.Clear();
             procesosTerminados.Clear();
             LblRelojGlobal.Text = string.Empty;
             FrameGlock.IsVisible = false;
+            BtnStop.IsEnabled = false;
+            LblId.Text = "-";
+            LblInstruccion.Text = "-";
+            LblProgramador.Text = "-";
+            LblTME.Text = "-";
+        }
 
+        private void BtnStop_Clicked(object sender, EventArgs e)
+        {
+            ticking = false;
+            BtnStop.IsEnabled = false;
+            EnableButtons(true);
         }
     }
 }

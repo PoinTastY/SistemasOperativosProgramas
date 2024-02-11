@@ -47,9 +47,10 @@
 
             <Button x:Name="BtnEjecutar"
                     Text="Ejecutar"
-                    Clicked="BtnEjecutar_Clicked"/>
+                    Clicked="BtnEjecutar_Clicked"
+                    BackgroundColor="Violet"/>
             <HorizontalStackLayout>
-                <Frame BackgroundColor="LightCyan">
+                <Frame BackgroundColor="DarkOrange">
                     <VerticalStackLayout>
                         <Label Text="Procesos Pendientes"/>
                         <Frame>
@@ -80,7 +81,7 @@
                     </VerticalStackLayout>
                 </Frame>
                 <VerticalStackLayout Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" MinimumWidthRequest="200" MinimumHeightRequest="200">
-                    <Frame VerticalOptions="Center" BackgroundColor="Pink" MinimumHeightRequest="250">
+                    <Frame VerticalOptions="Center" BackgroundColor="DarkSeaGreen" MinimumHeightRequest="250">
                         <StackLayout>
                             <Label Text="Ejecutando:"/>
                             <Frame>
@@ -106,9 +107,9 @@
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
-                <Frame>
+                <Frame BackgroundColor="#512BD4">
                     <VerticalStackLayout>
-                        <Label Text="Terminados"/>
+                        <Label Text="Terminados" TextColor="White"/>
                         <Frame>
                             <ListView x:Name="ListFinished"
                                       ItemSelected="ListFinished_ItemSelected"
@@ -136,10 +137,11 @@
                 </Frame>
 
             </HorizontalStackLayout>
-
-
-
-
+            <Button Text="ABORT"
+                    x:Name="BtnStop"
+                    Clicked="BtnStop_Clicked"
+                    IsEnabled="False"
+                    BackgroundColor="PaleVioletRed"/>
         </VerticalStackLayout>
     </FlexLayout>
 
