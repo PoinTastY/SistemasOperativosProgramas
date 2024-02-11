@@ -27,7 +27,10 @@ namespace Simulacion_Procesamiento_por_Lotes
         public MainPage()
         {
             InitializeComponent();
-
+#if ANDROID
+            Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.RequestedOrientation = Android.Content.PM.ScreenOrientation.Locked;
+            Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.RequestedOrientation = Android.Content.PM.ScreenOrientation.Landscape;
+#endif
             LabelSizeLote.Text = string.Format("Tamaño del lote: {0}", StepperSizeLote.Value);
             LabelMinTme.Text = string.Format("TME minimo: {0}", StepperMinTme.Value);
             LabelMaxTme.Text = string.Format("TME maximo: {0}", StepperMaxTme.Value);
@@ -93,20 +96,38 @@ namespace Simulacion_Procesamiento_por_Lotes
                     lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(7)]));
                 }
             }
-            //start the timer
+            int totallotes = lotes.Count - 1;
+            LblLotesFaltantes.Text = "Lotes Faltantes: " + totallotes;
             foreach (var lote in lotes)
             {
+                
+                
                 while (lote)
                 {
+                    
                     Proceso chamba = lote.TakeFirst();
-                    procesosPendientes.Remove(chamba);
-                    while (chamba.Tme >= 0)
+                    foreach (Proceso proceso in lote.Procesos)
                     {
-                        RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
-                        if(chamba != null)
+                        procesosPendientes.Add(proceso);
+                    }
+                    while (chamba.Tme > 0)
+                    {
+                        if (chamba.Tme >= 0)
                             Ejecucion(chamba);
+                        RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
                         await Task.Delay(TimeSpan.FromSeconds(1));
                     }
+                    Finalizados(chamba);
+                    procesosPendientes.Clear();
+                    
+                }
+                if(totallotes != 0)
+                {
+                    LblLotesFaltantes.Text = "Lotes Faltantes: " + --totallotes;
+                    LblId.Text = null;
+                    LblInstruccion.Text = null;
+                    LblProgramador.Text = null;
+                    LblTME.Text = null;
                 }
             }
         }
@@ -117,9 +138,9 @@ namespace Simulacion_Procesamiento_por_Lotes
             LblId.Text = chamba.Id.ToString();
             LblInstruccion.Text = "Instruccion: " + chamba.Instruccion;
             LblProgramador.Text = "Programador: " + chamba.Programador;
-            LblTME.Text = "TME restante: " + chamba.Tme--.ToString();
-            if (chamba.Tme == 0)
-                Finalizados(chamba);
+            chamba.Tme--;
+            LblTME.Text = "TME restante: " + chamba.Tme.ToString();
+            
         }
         private void Finalizados(Proceso chamba)
         {

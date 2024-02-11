@@ -1,17 +1,21 @@
-﻿namespace Simulacion_Procesamiento_por_Lotes.Models
+﻿using System.Collections.ObjectModel;
+
+namespace Simulacion_Procesamiento_por_Lotes.Models
 {
     public class Proceso
     {
-        private readonly int _id;
+        private int _id;
+        private int _tmeoriginal;
         private int _tme;
         private string _instruccion;
         private readonly float? _resultado;
-        private readonly string _programador;
+        private string _programador;
 
         public Proceso(int id, int min, int max, string programador)
         {
             _id = id;
             _tme = Randomizer(min+1, max-1);
+            _tmeoriginal = _tme;
             _programador = programador;
             _resultado = Procesamiento();
         }
@@ -21,13 +25,15 @@
         //get attributes
 
         //returns id
-        public int Id { get => _id; }
+        public int Id { get => _id; set => _id = value; }
 
         //returns TME
         public int Tme { get => _tme; set => _tme = value; }
 
+        public int TmeOriginal { get => _tmeoriginal; }
+
         //returns Instruccion
-        public string Instruccion { get => _instruccion; }
+        public string Instruccion { get => _instruccion; set => _instruccion = value; }
 
         //Returns Resultado
         public float? Resultado { get => _resultado; }

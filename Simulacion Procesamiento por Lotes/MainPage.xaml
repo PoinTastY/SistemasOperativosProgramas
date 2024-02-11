@@ -48,13 +48,21 @@
                               ItemTapped="ListPendings_ItemTapped">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextCell Text="{Binding Id}"
-                                          Detail="{Binding Instruccion}"/>
+                                <ViewCell>
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Id}"/>
+                                        <Label Text="{Binding Instruccion}"/>
+                                        <Label Text="{Binding Programador}"/>
+                                        <Label Text="{Binding TmeOriginal}"/>
+
+                                    </VerticalStackLayout>
+                                </ViewCell>
                             </DataTemplate>
                         
                         </ListView.ItemTemplate>
                         
                     </ListView>
+                    <Label x:Name="LblLotesFaltantes"/>
                 </VerticalStackLayout>
                 <VerticalStackLayout>
                     <Label Text="Ejecutando:"/>

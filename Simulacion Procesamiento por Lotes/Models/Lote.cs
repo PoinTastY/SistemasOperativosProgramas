@@ -30,19 +30,11 @@
 
         public Proceso TakeFirst()
         {
-            _procesosActuales -= 1;
-
-            if (_procesosActuales != 0)
-            {
-                // Si hay procesos restantes en la lista:
-                Proceso primerProceso = _procesos[0]; // Tomar el primer proceso
-                _procesos.RemoveAt(0); // Eliminar el primer proceso de la lista
-                return primerProceso; // Elimina y devuelve el primer proceso
-            }
-            else
-            {
-                return null; // Si no hay procesos restantes, devuelve null o realiza otra acción según lo necesario
-            }
+            _procesosActuales--;
+            // Si hay procesos restantes en la lista:
+            Proceso primerProceso = _procesos[0]; // Tomar el primer proceso
+            _procesos.RemoveAt(0); // Eliminar el primer proceso de la lista
+            return primerProceso; // Elimina y devuelve el primer proceso
         }
 
         public List<Proceso> Procesos {get => _procesos; }
