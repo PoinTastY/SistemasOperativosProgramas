@@ -31,10 +31,7 @@ namespace Simulacion_Procesamiento_por_Lotes
         public MainPage()
         {
             InitializeComponent();
-#if ANDROID
-            Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.RequestedOrientation = Android.Content.PM.ScreenOrientation.Locked;
-            Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.RequestedOrientation = Android.Content.PM.ScreenOrientation.Landscape;
-#endif
+
             LabelSizeLote.Text = string.Format("Tamaño del lote: {0}", StepperSizeLote.Value);
             LabelMinTme.Text = string.Format("TME minimo: {0}", StepperMinTme.Value);
             LabelMaxTme.Text = string.Format("TME maximo: {0}", StepperMaxTme.Value);
@@ -159,7 +156,7 @@ namespace Simulacion_Procesamiento_por_Lotes
 
         private void Ejecucion(Proceso chamba)
         {
-            LblRelojGlobal.Text = $"Reloj Global:{RelojGlobal.Minute}:{RelojGlobal.Second:00}";
+            LblRelojGlobal.Text = $"Reloj Global: {RelojGlobal.Minute}:{RelojGlobal.Second:00}";
             LblId.Text = "Proceso: " + chamba.Id.ToString();
             LblInstruccion.Text = "Instruccion: " + chamba.Instruccion;
             LblProgramador.Text = "Programador: " + chamba.Programador;
