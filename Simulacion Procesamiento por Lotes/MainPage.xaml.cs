@@ -92,6 +92,7 @@ namespace Simulacion_Procesamiento_por_Lotes
 
         private async void Run()
         {
+            RelojGlobal = new();
             FrameGlock.IsVisible = true;
             //initialize every lote needed basing on settings
             lotes.Add(new Lote(((int)StepperSizeLote.Value)));
