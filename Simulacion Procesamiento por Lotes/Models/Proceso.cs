@@ -7,7 +7,7 @@
         private int _tmeoriginal;
         private int _tme;
         private string _instruccion;
-        private float? _resultado;
+        private float _resultado;
         private string _programador;
 
         //builders
@@ -34,7 +34,7 @@
         public string Instruccion { get => _instruccion; set => _instruccion = value; }
 
         //Returns Resultado
-        public float? Resultado { get => _resultado; set => _resultado = value; }
+        public float Resultado { get => _resultado; set => _resultado = value; }
 
         //Returns assigned Programador
         public string Programador { get => _programador; set => _programador = value; }
@@ -49,9 +49,9 @@
         }
         
         //Returns a random operation, and also the result
-        private int? Procesamiento()
+        private float Procesamiento()
         {
-            int a, b;
+            float a, b;
             a = Randomizer(1, 9);
             b = Randomizer(1, 9);
             switch (Randomizer(1, 4)){
@@ -68,7 +68,7 @@
                     Instruccion = $"{a} - {b}";
                     return a - b;
                 default:
-                    return null;
+                    return 0;
             }
 
         }

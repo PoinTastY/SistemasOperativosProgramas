@@ -104,7 +104,7 @@ TME: {proceso.TmeOriginal}
             LblLotesFaltantes.Text = "Lotes Faltantes: " + totallotes;
             foreach (var lote in lotes)
             {
-                resultados += $"Lote: {++cuentalotes}";
+                resultados += $"Lote: {++cuentalotes}\n";
                 while (lote)
                 {
                     Proceso chamba = lote.TakeFirst();//tomamos los procesos en orden
@@ -162,7 +162,7 @@ TME: {proceso.TmeOriginal}
             if (chamba.Tme == 0)//si se termina la chamba, se manda a la variable que guarda los resultados
                 resultados += @$"
 {chamba.Id}. {chamba.Programador}
-{chamba.Instruccion} = {chamba.Resultado}
+{chamba.Instruccion} = {chamba.Resultado:0.00}
 ";
         }
 
