@@ -3,19 +3,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Simulacion_Procesamiento_por_Lotes.Models
 {
-    public partial class Proceso : ObservableObject
+    public partial class Proceso
     {
-        [ObservableProperty]
         private int _id;
-        [ObservableProperty]
         private int _tmeoriginal;
-        [ObservableProperty]
         private int _tme;
-        [ObservableProperty]
         private string _instruccion;
-        [ObservableProperty]
         private float? _resultado;
-        [ObservableProperty]
         private string _programador;
 
         public Proceso(int id, int min, int max, string programador)
@@ -32,21 +26,21 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
         //get attributes
 
         //returns id
-        //public int Id { get => _id; set => SetProperty(ref _id, value); }
+        public int Id { get => _id; set => _id = value; }
 
-        ////returns TME
-        //public int Tme { get => _tme; set => SetProperty(ref _tme, value); }
+        //returns TME
+        public int Tme { get => _tme; set => _tme = value; }
 
-        //public int TmeOriginal { get => _tmeoriginal; set => SetProperty(ref _tmeoriginal, value); }
+        public int TmeOriginal { get => _tmeoriginal; set => _tmeoriginal = value; }
 
-        ////returns Instruccion
-        //public string Instruccion { get => _instruccion; set => SetProperty(ref _instruccion, value); }
+        //returns Instruccion
+        public string Instruccion { get => _instruccion; set => _instruccion = value; }
 
-        ////Returns Resultado
-        //public float? Resultado { get => _resultado; set => SetProperty(ref _resultado, value); }
+        //Returns Resultado
+        public float? Resultado { get => _resultado; set => _resultado = value; }
 
-        ////Returns assigned Programador
-        //public string Programador { get => _programador; set => SetProperty(ref _programador, value); } 
+        //Returns assigned Programador
+        public string Programador { get => _programador; set => _programador = value; }
 
         //Building Methods
         //Returns a random number between given range

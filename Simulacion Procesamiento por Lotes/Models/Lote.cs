@@ -3,11 +3,10 @@ using System.Collections.ObjectModel;
 
 namespace Simulacion_Procesamiento_por_Lotes.Models
 {
-    public partial class Lote : ObservableObject
+    public partial class Lote
     {
         private readonly int _capacidadMax;
         private int _procesosActuales;
-        [ObservableProperty]
         private ObservableCollection<Proceso> _procesos;
 
         public Lote(int size)
@@ -40,6 +39,8 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
             Procesos.RemoveAt(0); // Eliminar el primer proceso de la lista
             return primerProceso; // Elimina y devuelve el primer proceso
         }
+
+        public ObservableCollection<Proceso> Procesos { get => _procesos; set => _procesos = value; }
 
 
         //overload to validate if lote is empty

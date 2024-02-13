@@ -13,8 +13,8 @@ namespace Simulacion_Procesamiento_por_Lotes
 
         private TimeOnly RelojGlobal = new();
         private List<Lote> lotes = new();
-        public ObservableCollection<Proceso> procesosTerminados = new();
-        public ObservableCollection<Proceso> procesosPendientes = new();
+        public ObservableCollection<ViewInfo> procesosTerminados = new();
+        public ObservableCollection<ViewInfo> procesosPendientes = new();
 
         private List<string> programadores = new()
         {
@@ -115,7 +115,8 @@ namespace Simulacion_Procesamiento_por_Lotes
                     Proceso chamba = lote.TakeFirst();
                     foreach (Proceso proceso in lote.Procesos)
                     {
-                        procesosPendientes.Add(proceso);
+                        ViewInfo viewinfo = new(proceso.Id, proceso.Instruccion, proceso.Programador, proceso.TmeOriginal);
+                        procesosPendientes.Add(viewinfo);
                     }
                     while (chamba.Tme > 0 && ticking)
                     {
@@ -174,7 +175,8 @@ TME: {chamba.Tme}
         }
         private void Finalizados(Proceso chamba)
         {
-            procesosTerminados.Add(chamba);
+            ViewInfo viewinfo = new(chamba.Id, chamba.Instruccion, chamba.Programador, chamba.TmeOriginal);
+            procesosTerminados.Add(viewinfo);
         }
 
         //evento de timer
