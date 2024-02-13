@@ -4,7 +4,7 @@
              x:Class="Simulacion_Procesamiento_por_Lotes.MainPage"
              Title="Simulacion Procesamiento por Lotes :P">
 
-    <ScrollView>
+    <ScrollView BackgroundColor="FloralWhite">
         <VerticalStackLayout
             Spacing="25"
             Padding="30,0"
@@ -38,8 +38,8 @@
                                      ValueChanged="StepperTotalProcesos_ValueChanged"/>
                         </VerticalStackLayout>
 
-                        <Frame BackgroundColor="MediumPurple" x:Name="FrameGlock" IsVisible="false">
-                            <Label x:Name="LblRelojGlobal" FontSize="Title" MinimumWidthRequest="230"/>
+                        <Frame BackgroundColor="MediumPurple" x:Name="FrameGlock">
+                            <Label x:Name="LblRelojGlobal" FontSize="Title" MinimumWidthRequest="230" Text="Esperando..."/>
                         </Frame>
                     
                     </HorizontalStackLayout>
@@ -127,7 +127,7 @@
                                                     <Label Text="{Binding Id, StringFormat='Proceso: {0}'}"/>
                                                     <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
                                                     <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
-                                                    <Label Text="{Binding Tmeoriginal, StringFormat='TME: {0}'}"/>
+                                                    <Label Text="{Binding Tme, StringFormat='TME: {0}'}"/>
 
                                                 </VerticalStackLayout>
                                             </ViewCell>

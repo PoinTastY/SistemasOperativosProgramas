@@ -1,10 +1,8 @@
-﻿using CommunityToolkit.Mvvm;
-using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace Simulacion_Procesamiento_por_Lotes.Models
+﻿namespace Simulacion_Procesamiento_por_Lotes.Models
 {
     public partial class Proceso
     {
+        //attributes
         private int _id;
         private int _tmeoriginal;
         private int _tme;
@@ -12,6 +10,7 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
         private float? _resultado;
         private string _programador;
 
+        //builders
         public Proceso(int id, int min, int max, string programador)
         {
             _id = id;
@@ -20,11 +19,9 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
             _programador = programador;
             _resultado = Procesamiento();
         }
-
         public Proceso() { }
 
-        //get attributes
-
+        //public acces
         //returns id
         public int Id { get => _id; set => _id = value; }
 
@@ -50,7 +47,8 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
             var x = new Random().Next(min,max+1);
             return x;
         }
-
+        
+        //Returns a random operation, and also the result
         private int? Procesamiento()
         {
             int a, b;

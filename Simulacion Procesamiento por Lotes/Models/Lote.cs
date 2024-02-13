@@ -1,14 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;// for observable collection
 
 namespace Simulacion_Procesamiento_por_Lotes.Models
 {
     public partial class Lote
     {
+        //attributes
         private readonly int _capacidadMax;
         private int _procesosActuales;
         private ObservableCollection<Proceso> _procesos;
 
+        //builder
         public Lote(int size)
         {
             _capacidadMax = size;
@@ -31,17 +32,17 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
             }
         }
 
+        //take first proceso
         public Proceso TakeFirst()
         {
-            _procesosActuales--;
-            // Si hay procesos restantes en la lista:
+            _procesosActuales--;//to continue w the index order
             Proceso primerProceso = Procesos[0]; // Tomar el primer proceso
             Procesos.RemoveAt(0); // Eliminar el primer proceso de la lista
             return primerProceso; // Elimina y devuelve el primer proceso
         }
 
+        //returns current processes
         public ObservableCollection<Proceso> Procesos { get => _procesos; set => _procesos = value; }
-
 
         //overload to validate if lote is empty
         public static implicit operator bool(Lote lote)

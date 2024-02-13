@@ -4,6 +4,7 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
 {
     public partial class ViewInfo : ObservableObject
     {
+        //properties
         [ObservableProperty]
         private int _id;
         [ObservableProperty]
@@ -13,6 +14,7 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
         [ObservableProperty]
         private int _tme;
 
+        //builders
         public ViewInfo() { }
         public ViewInfo(int id, string instruccion, string programador, int tme)
         {
@@ -21,6 +23,6 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
             _programador = programador;
             _tme = tme;
         }
-
+        //this is only for formatting the display on binding
     }
 }
