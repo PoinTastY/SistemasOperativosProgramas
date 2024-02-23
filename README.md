@@ -4,5 +4,5 @@ Este es un programa que simula el procesamiento por lotes, solo hay que elegir l
 ![Screenshot 2024-02-23 150753](https://github.com/PoinTastY/SistemasOperativosProgramas/assets/52047942/105f3f9a-c02a-4684-b52f-842c60a513b7)
 Datos.txt <br>
 ![Screenshot 2024-02-23 151257](https://github.com/PoinTastY/SistemasOperativosProgramas/assets/52047942/c3d2213e-46b8-44de-9f77-ba37e91e8a78)
-Resultados.txt<br>
+<br>Resultados.txt<br>
 ![Screenshot 2024-02-23 151643](https://github.com/PoinTastY/SistemasOperativosProgramas/assets/52047942/cba2554f-834e-407f-af4e-7a4b9189f7d9)
