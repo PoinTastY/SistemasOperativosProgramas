@@ -1,6 +1,7 @@
-﻿using Simulacion_Procesamiento_por_Lotes.Models;
+﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+using Simulacion_Procesamiento_por_Lotes.Models;
 using System.Collections.ObjectModel;
-
+using System.Windows;
 
 namespace Simulacion_Procesamiento_por_Lotes
 {
@@ -338,6 +339,16 @@ TME: {proceso.TmeOriginal}
         {
             BtnExportResults.IsEnabled = x;
             BtnRerun.IsEnabled = x;
+        }
+
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button_Clicked_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

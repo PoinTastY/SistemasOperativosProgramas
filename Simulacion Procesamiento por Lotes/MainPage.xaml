@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:windows="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.WindowsSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="Simulacion_Procesamiento_por_Lotes.MainPage"
              Title="Simulacion Procesamiento por Lotes :P">
 
@@ -82,7 +83,16 @@
                             <Label x:Name="LblLotesFaltantes"/>
                         </VerticalStackLayout>
                     </Frame>
+                    
                     <VerticalStackLayout Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" MinimumWidthRequest="200" MinimumHeightRequest="200">
+                        <HorizontalStackLayout HorizontalOptions="Fill" >
+                            <Button Text="Interrupt"
+                                    Clicked="Button_Clicked"
+                                    windows:VisualElement.AccessKey="I"/>
+                            <Button Text="Error"
+                                    Clicked="Button_Clicked_1"
+                                    windows:VisualElement.AccessKey="E"/>
+                        </HorizontalStackLayout>
                         <Frame VerticalOptions="Center" BackgroundColor="DarkSeaGreen" MinimumHeightRequest="250">
                             <StackLayout>
                                 <Label Text="Ejecutando:"/>
