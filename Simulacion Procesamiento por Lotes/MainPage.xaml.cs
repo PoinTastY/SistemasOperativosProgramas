@@ -15,6 +15,9 @@ namespace Simulacion_Procesamiento_por_Lotes
 
         //controlls and allows the execution of the program, no ticking no working
         private bool ticking = true;
+        private bool interrupt = false;
+        private bool error = false;
+        Proceso chamba;
 
         //Reloj
         private TimeOnly RelojGlobal = new();
@@ -37,6 +40,7 @@ namespace Simulacion_Procesamiento_por_Lotes
             "Ninfa",
             "Caliope",
             "Carlos",
+            "Collette",
             "Magdalena",
             "AMLO"
         };
@@ -73,7 +77,7 @@ namespace Simulacion_Procesamiento_por_Lotes
                 {
                     indexLote ++;
                     lotes.Add(new Lote((int)StepperSizeLote.Value));
-                    lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(10)]));
+                    lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(1)]));
                 }
             }
 
@@ -108,11 +112,11 @@ TME: {proceso.TmeOriginal}
                 resultados += $"Lote: {++cuentalotes}\n";
                 while (lote)
                 {
-                    Proceso chamba = lote.TakeFirst();//tomamos los procesos en orden
+                    chamba = lote.TakeFirst();//tomamos los procesos en orden
 
                     foreach (Proceso proceso in lote.Procesos)//se llena la lista de pendientes (sin el primero que tomamos, xq se pasa directo a ejecucion)
                     {
-                        ViewInfo viewinfo = new(proceso.Id, proceso.Instruccion, proceso.Programador, proceso.TmeOriginal);//usamos nuestro objeto para data binding (para xaml)
+                        ViewInfo viewinfo = new(proceso.Id, proceso.Instruccion, proceso.Programador, proceso.Tme);//usamos nuestro objeto para data binding (para xaml)
                         procesosPendientes.Add(viewinfo);
                     }
                     do
@@ -122,11 +126,30 @@ TME: {proceso.TmeOriginal}
                             Ejecucion(chamba);
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
+                        if(interrupt)
+                        {
+                            chamba.TmeOriginal = chamba.Tme;
+                            lote.Interrupted(chamba);
+                            interrupt = false;
+                            break;
+                        }
+                        if(error)
+                        {
+                            resultados += @$"
+{chamba.Id}. {chamba.Programador}
+{chamba.Instruccion} !ERROR
+";
+                            error = false;
+                            ViewInfo viewinfo = new(chamba.Id, chamba.Instruccion + " !ERROR", chamba.Programador, chamba.TmeOriginal);
+                            procesosTerminados.Add(viewinfo);
+                            break;
+                        }
                     } while (chamba.Tme > 0 && ticking);//recuerda, ticking puede tronar el proceso si queremos, si no, hasta que yano haya chamba
 
                         if (!ticking)//si abortamos, pasa aqui y termina run();
-                        return;
-                    Finalizados(chamba);//SI UNA Chamba termina, sale del while, y lo arrojamos a la lista de terminados
+                            return;
+                    if(chamba.Tme == 0) 
+                        Finalizados(chamba);//SI UNA Chamba termina, sale del while, y lo arrojamos a la lista de terminados
                     procesosPendientes.Clear();//se limpian los procesos pendientes para actulaizar la vista de los elmentos de nuevo al ciclar
                     
                 }//cuando termina el lote, sale de while y vamos al siguiente
@@ -208,6 +231,8 @@ TME: {proceso.TmeOriginal}
             StepperTotalProcesos.IsEnabled = false;
             BtnEjecutar.IsEnabled = false;
             BtnStop.IsEnabled = true;
+            BtnInterrupt.IsEnabled = true;
+            BtnError.IsEnabled = true;
             ticking = true;
             Run();// running controll function
         }
@@ -303,6 +328,8 @@ TME: {proceso.TmeOriginal}
             ticking = false;
             BtnStop.IsEnabled = false;
             EnableButtons(true);
+            BtnError.IsEnabled = false;
+            BtnInterrupt.IsEnabled = false;
         }
 
         //lists tapping, basically dont do anything
@@ -339,15 +366,19 @@ TME: {proceso.TmeOriginal}
         {
             BtnExportResults.IsEnabled = x;
             BtnRerun.IsEnabled = x;
+            BtnError.IsEnabled = x;
+            BtnInterrupt.IsEnabled = x;
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private void BtnInterrupt_Clicked(object sender, EventArgs e)
         {
-
+            interrupt = true;
         }
 
-        private void Button_Clicked_1(object sender, EventArgs e)
+        private void BtnError_Clicked(object sender, EventArgs e)
         {
+            chamba.Resultado = null;
+            error = true;
 
         }
     }

@@ -15,7 +15,6 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
         private int _tme;
 
         //builders
-        public ViewInfo() { }
         public ViewInfo(int id, string instruccion, string programador, int tme)
         {
             _id = id;

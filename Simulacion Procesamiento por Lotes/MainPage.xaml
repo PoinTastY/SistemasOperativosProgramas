@@ -86,12 +86,16 @@
                     
                     <VerticalStackLayout Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" MinimumWidthRequest="200" MinimumHeightRequest="200">
                         <HorizontalStackLayout HorizontalOptions="Fill" >
-                            <Button Text="Interrupt"
-                                    Clicked="Button_Clicked"
-                                    windows:VisualElement.AccessKey="I"/>
+                            <Button x:Name="BtnInterrupt"
+                                    Text="Interrupt"
+                                    Clicked="BtnInterrupt_Clicked"
+                                    windows:VisualElement.AccessKey="I"
+                                    IsEnabled="False"/>
                             <Button Text="Error"
-                                    Clicked="Button_Clicked_1"
-                                    windows:VisualElement.AccessKey="E"/>
+                                    x:Name="BtnError"
+                                    Clicked="BtnError_Clicked"
+                                    windows:VisualElement.AccessKey="E"
+                                    IsEnabled="False"/>
                         </HorizontalStackLayout>
                         <Frame VerticalOptions="Center" BackgroundColor="DarkSeaGreen" MinimumHeightRequest="250">
                             <StackLayout>
