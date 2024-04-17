@@ -1,7 +1,5 @@
-﻿using Microsoft.Maui.Controls.PlatformConfiguration;
-using Simulacion_Procesamiento_por_Lotes.Models;
+﻿using Simulacion_Procesamiento_por_Lotes.Models;
 using System.Collections.ObjectModel;
-using System.Windows;
 
 namespace Simulacion_Procesamiento_por_Lotes
 {
