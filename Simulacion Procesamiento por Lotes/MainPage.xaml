@@ -97,7 +97,7 @@
                                     windows:VisualElement.AccessKey="E"
                                     IsEnabled="False"/>
                         </HorizontalStackLayout>
-                        <Frame VerticalOptions="Center" BackgroundColor="DarkSeaGreen" MinimumHeightRequest="250">
+                        <Frame VerticalOptions="Center" BackgroundColor="DarkSeaGreen" MinimumHeightRequest="225">
                             <StackLayout>
                                 <Label Text="Ejecutando:"/>
                                 <Frame>
@@ -131,8 +131,8 @@
                                           ItemSelected="ListFinished_ItemSelected"
                                           ItemTapped="ListFinished_ItemTapped"
                                           HorizontalOptions="FillAndExpand"
-                                          MaximumHeightRequest="333"
-                                          MinimumHeightRequest="333"
+                                          MaximumHeightRequest="300"
+                                          MinimumHeightRequest="300"
                                           MinimumWidthRequest="250">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>

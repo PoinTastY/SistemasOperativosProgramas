@@ -129,7 +129,7 @@ TME: {proceso.TmeOriginal}
                         if(interrupt)
                         {
                             chamba.TmeOriginal = chamba.Tme;
-                            lote.Interrupted(chamba);
+                            lote.Add(chamba);
                             interrupt = false;
                             break;
                         }
@@ -171,6 +171,9 @@ TME: {proceso.TmeOriginal}
             resultados += $"\n\nTiempo total de ejecucion: {RelojGlobal.Minute}:{RelojGlobal.Second:00}\n";
             BtnStop.IsEnabled = false;
             EnableButtons(true);
+            BtnError.IsEnabled = false;
+            BtnInterrupt.IsEnabled = false;
+            BtnRerun.IsEnabled = true;
         }
 
         private void Ejecucion(Proceso chamba)
@@ -312,6 +315,9 @@ TME: {proceso.TmeOriginal}
             StepperTotalProcesos.IsEnabled = true;
             BtnEjecutar.IsEnabled = true;
             EnableButtons(false);
+            BtnRerun.IsEnabled = false;
+            BtnError.IsEnabled = true;
+            BtnInterrupt.IsEnabled = true;
             procesosPendientes.Clear();
             procesosTerminados.Clear();
             LblRelojGlobal.Text = "Esperando...";
@@ -365,8 +371,6 @@ TME: {proceso.TmeOriginal}
         private void EnableButtons(bool x)
         {
             BtnExportResults.IsEnabled = x;
-            BtnRerun.IsEnabled = x;
-            BtnError.IsEnabled = x;
             BtnInterrupt.IsEnabled = x;
         }
 

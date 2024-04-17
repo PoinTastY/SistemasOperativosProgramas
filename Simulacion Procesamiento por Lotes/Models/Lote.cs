@@ -41,11 +41,7 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
             return primerProceso; // Elimina y devuelve el primer proceso
         }
 
-        public void Interrupted(Proceso x)
-        {
-            _procesosActuales++;
-            _procesos.Add(x);
-        }
+        
 
         //returns current processes
         public ObservableCollection<Proceso> Procesos { get => _procesos; set => _procesos = value; }
