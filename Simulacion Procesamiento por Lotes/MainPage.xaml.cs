@@ -107,13 +107,15 @@ TME: {proceso.TmeOriginal}
             int totallotes = lotes.Count - 1;
             int cuentalotes = 0;
             LblLotesFaltantes.Text = "Lotes Faltantes: " + totallotes;
+            resultados += $"Lote: {++cuentalotes}\n";
             foreach (var lote in lotes)
             {
-                resultados += $"Lote: {++cuentalotes}\n";
                 while (lote)
                 {
-                    chamba = lote.TakeFirst();//tomamos los procesos en orden
 
+
+                    chamba = lote.TakeFirst();//tomamos los procesos en orden
+                    
                     foreach (Proceso proceso in lote.Procesos)//se llena la lista de pendientes (sin el primero que tomamos, xq se pasa directo a ejecucion)
                     {
                         ViewInfo viewinfo = new(proceso.Id, proceso.Instruccion, proceso.Programador, proceso.Tme);//usamos nuestro objeto para data binding (para xaml)
@@ -124,42 +126,50 @@ TME: {proceso.TmeOriginal}
                         //si la chamba sigue siendo valida, se mantiene en ejecucion(valida if tme >= 0)
                         if (chamba.Tme >= 0 && ticking)
                         {
-                            if(chamba.Tme-- != 0)
+                            if (chamba.Tme != 0)
                                 Ejecucion(chamba);
                         }
 
 
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
-                        if(interrupt)
+                        if (interrupt)
                         {
-                            if(chamba.Tme != 0)
+                            if (chamba.Tme != 0)
                                 lote.Add(chamba);
                             interrupt = false;
                             break;
                         }
-                        if(error)
+                        if (error)
                         {
                             resultados += @$"
 {chamba.Id}. {chamba.Programador}
 {chamba.Instruccion} !ERROR
 ";
-                            error = false;
-                            
+                            chamba.Tme = 0;
                             ViewInfo viewinfo = new(chamba.Id, chamba.Instruccion + " !ERROR", chamba.Programador, chamba.TmeOriginal);
                             procesosTerminados.Add(viewinfo);
                             break;
                         }
                     } while (chamba.Tme > 0 && ticking);//recuerda, ticking puede tronar el proceso si queremos, si no, hasta que yano haya chamba
 
-                        if (!ticking)//si abortamos, pasa aqui y termina run();
-                            return;
-                    if(chamba.Tme == 0) 
-                        Finalizados(chamba);//SI UNA Chamba termina, sale del while, y lo arrojamos a la lista de terminados
+                    if (!ticking)//si abortamos, pasa aqui y termina run();
+                        return;
+                    if (error)
+                    {
+                        error = false;
+                    }
+                    else
+                    {
+                        if(chamba.Tme == 0)
+                            Finalizados(chamba);//SI UNA Chamba termina, sale del while, y lo arrojamos a la lista de terminados
+                    }
+                    
                     procesosPendientes.Clear();//se limpian los procesos pendientes para actulaizar la vista de los elmentos de nuevo al ciclar
                     
                 }//cuando termina el lote, sale de while y vamos al siguiente
-                if(totallotes != 0)
+                
+                if (totallotes != 0)
                 {
                     LblLotesFaltantes.Text = "Lotes Faltantes: " + --totallotes;
                 }
@@ -171,6 +181,11 @@ TME: {proceso.TmeOriginal}
                     LblInstruccion.Text = "-";
                     LblProgramador.Text = "-";
                     LblTME.Text = "-";
+                    --totallotes;
+                }
+                if (!lote && totallotes >= 0)
+                {
+                    resultados += $"\nLote: {++cuentalotes}\n";
                 }
             }
             lotes.Clear();//al terminar, limpiamos el changarro, terminamos la variable de resultados, y estamos listos para exportar los resultados, cuando el usuario quiera
@@ -189,6 +204,7 @@ TME: {proceso.TmeOriginal}
             LblId.Text = "Proceso: " + chamba.Id.ToString();
             LblInstruccion.Text = "Instruccion: " + chamba.Instruccion;
             LblProgramador.Text = "Programador: " + chamba.Programador;
+            chamba.Tme--;
             LblTME.Text = "TME restante: " + chamba.Tme.ToString();
 
             if (chamba.Tme == 0)//si se termina la chamba, se manda a la variable que guarda los resultados
