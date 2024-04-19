@@ -123,13 +123,18 @@ TME: {proceso.TmeOriginal}
                     {
                         //si la chamba sigue siendo valida, se mantiene en ejecucion(valida if tme >= 0)
                         if (chamba.Tme >= 0 && ticking)
-                            Ejecucion(chamba);
+                        {
+                            if(chamba.Tme-- != 0)
+                                Ejecucion(chamba);
+                        }
+
+
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
                         if(interrupt)
                         {
-                            chamba.TmeOriginal = chamba.Tme;
-                            lote.Add(chamba);
+                            if(chamba.Tme != 0)
+                                lote.Add(chamba);
                             interrupt = false;
                             break;
                         }
@@ -140,6 +145,7 @@ TME: {proceso.TmeOriginal}
 {chamba.Instruccion} !ERROR
 ";
                             error = false;
+                            
                             ViewInfo viewinfo = new(chamba.Id, chamba.Instruccion + " !ERROR", chamba.Programador, chamba.TmeOriginal);
                             procesosTerminados.Add(viewinfo);
                             break;
@@ -183,7 +189,6 @@ TME: {proceso.TmeOriginal}
             LblId.Text = "Proceso: " + chamba.Id.ToString();
             LblInstruccion.Text = "Instruccion: " + chamba.Instruccion;
             LblProgramador.Text = "Programador: " + chamba.Programador;
-            chamba.Tme--;
             LblTME.Text = "TME restante: " + chamba.Tme.ToString();
 
             if (chamba.Tme == 0)//si se termina la chamba, se manda a la variable que guarda los resultados
