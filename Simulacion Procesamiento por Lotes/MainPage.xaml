@@ -111,6 +111,21 @@
 
                             </StackLayout>
                         </Frame>
+                        <VerticalStackLayout>
+                            <ListView>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <ViewCell>
+                                            <HorizontalStackLayout>
+                                                <Label Text="{Binding Id, StringFormat='Proceso: {0}'}"/>
+                                                <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
+                                                <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
+                                            </HorizontalStackLayout>
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>  
+                            </ListView>
+                        </VerticalStackLayout>
                         <VerticalStackLayout VerticalOptions="EndAndExpand">
                             <Button Text="Generar Resultados"
                                     x:Name="BtnExportResults"
