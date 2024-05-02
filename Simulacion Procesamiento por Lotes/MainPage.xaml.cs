@@ -406,5 +406,17 @@ TME: {proceso.TmeOriginal}
             error = true;
 
         }
+
+        private void HotKeyInterrupt_Clicked(object sender, EventArgs e)
+        {
+            interrupt = true;
+
+        }
+
+        private void HotKeyError_Clicked(object sender, EventArgs e)
+        {
+            chamba.Resultado = null;
+            error = true;
+        }
     }
 }

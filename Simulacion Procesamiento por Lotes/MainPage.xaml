@@ -90,12 +90,41 @@
                                     Text="Interrupt"
                                     Clicked="BtnInterrupt_Clicked"
                                     windows:VisualElement.AccessKey="I"
-                                    IsEnabled="False"/>
+                                    IsEnabled="False">
+                                <FlyoutBase.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="Interrupt"
+                                                        x:Name="HotKeyInterrupt"
+                                                        Clicked="HotKeyInterrupt_Clicked">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="None"
+                                                                     Key="I" />
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+
+                                    </MenuFlyout>
+                                </FlyoutBase.ContextFlyout>
+                            </Button>
+                            <!--HotKey Example-->
                             <Button Text="Error"
                                     x:Name="BtnError"
                                     Clicked="BtnError_Clicked"
                                     windows:VisualElement.AccessKey="E"
-                                    IsEnabled="False"/>
+                                    IsEnabled="False">
+                                <FlyoutBase.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="Interrupt"
+                                                        x:Name="HotKeyError"
+                                                        Clicked="HotKeyError_Clicked">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="None"
+                                                                     Key="E" />
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+
+                                    </MenuFlyout>
+                                </FlyoutBase.ContextFlyout>
+                            </Button>
                         </HorizontalStackLayout>
                         <Frame VerticalOptions="Center" BackgroundColor="DarkSeaGreen" MinimumHeightRequest="225">
                             <StackLayout>
