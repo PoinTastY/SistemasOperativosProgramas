@@ -1,6 +1,6 @@
 ﻿using Simulacion_Procesamiento_por_Lotes.Models;
 using System.Collections.ObjectModel;
-using System.Xml.Serialization;
+
 
 namespace Simulacion_Procesamiento_por_Lotes
 {
@@ -12,16 +12,18 @@ namespace Simulacion_Procesamiento_por_Lotes
         //string where we write the results
         private string resultados;
 
+
         //controlls and allows the execution of the program, no ticking no working
         private bool ticking = true;
         private bool interrupt = false;
         private bool error = false;
         private bool skip = false;
         private bool wait4Blocked = false;
+        private bool pause = false;
         private int nuevos;
         private int nextLote;
         Proceso chamba;
-
+        
 
         //Reloj
         private TimeOnly RelojGlobal = new();
@@ -51,10 +53,14 @@ namespace Simulacion_Procesamiento_por_Lotes
             "AMLO"
         };
         
+        
+
         //main
         public MainPage()
         {
             InitializeComponent();
+
+
 
             //display and link data (not Relevant 4 teacher)
             //LabelSizeLote.Text = string.Format("Tamaño del lote: {0}", StepperSizeLote.Value); not used 4 dis one
@@ -87,6 +93,7 @@ namespace Simulacion_Procesamiento_por_Lotes
                     lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(1)]));
                 }
             }
+            
 
             //writing generated datos.txt
             string datos = $"-------------------------------------------------------\nCantidad de Procesos: {StepperTotalProcesos.Value} TME minimo: {StepperMinTme.Value} TME maximo: {StepperMaxTme.Value} Total de Procesos: {StepperTotalProcesos.Value}\n\n";
@@ -171,7 +178,6 @@ TME: {proceso.TmeOriginal}
                     }
                     do
                     {
-                        
                         ListBlocked.ItemsSource = procesosBloqueados;
                         //si la chamba sigue siendo valida, se mantiene en ejecucion(valida if tme >= 0)
                         //logs
@@ -186,7 +192,10 @@ TME: {proceso.TmeOriginal}
                             chamba.Servicio += 1;
                         }
                         await Task.Delay(TimeSpan.FromSeconds(1));
+                        while (pause)
+                            await Task.Delay(100);
                         RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
+
                         if(interrupt)
                         {
                             if(chamba.Tme != 0)
@@ -206,6 +215,8 @@ TME: {proceso.TmeOriginal}
                             if (nuevos != 0)
                                 LblProcesosPendientes.Text = "Procesos Nuevos: " + --nuevos;
                             chamba.Finalizacion = RelojGlobal.Second + (RelojGlobal.Minute * 60);
+                            chamba.Retorno = RelojGlobal.Second + (RelojGlobal.Minute * 60);
+
                             break;
                         }
                         ListBlocked.ItemsSource = null;
@@ -494,9 +505,38 @@ TME: {proceso.TmeOriginal}
             string tabla = "ID  Llegada  Finalizacion  Retorno  Respuesta  Espera  Bloqueado  Servicio\n";
             foreach (Proceso proceso in data.OrderBy(p => p.Id))
             {
-                tabla += $"{proceso.Id,-4} {proceso.Llegada,-9} {proceso.Finalizacion,-13} {proceso.Retorno,-8} {proceso.Respuesta,-10} {proceso.Espera,-7} {proceso.Bloqueado,-10} {proceso.Servicio}\n";
+                tabla += $"{MinSecConverter(proceso.Id),-4} {MinSecConverter(proceso.Llegada),-9} {MinSecConverter(proceso.Finalizacion),-13} {MinSecConverter(proceso.Retorno),-8} {MinSecConverter(proceso.Respuesta),-10} {MinSecConverter(proceso.Espera),-7} {MinSecConverter(proceso.Bloqueado),-10} {MinSecConverter(proceso.Servicio)}\n";
             }
             return tabla;
+        }
+
+        private string MinSecConverter(int val)
+        {
+            int minutos = val / 60;
+            int sec = val % 60;
+            return minutos == 0 ?  $"{sec}" : $"{minutos}:{sec}";
+        }
+
+        private void HotKeyInterrupt_Clicked(object sender, EventArgs e)
+        {
+            interrupt = true;
+        }
+
+        private void HotKeyError_Clicked(object sender, EventArgs e)
+        {
+            chamba.Resultado = null;
+            error = true;
+        }
+
+        private void HotKeyPause_Clicked(object sender, EventArgs e)
+        {
+            pause = true;
+        }
+
+        private void HotKeyContinue_Clicked(object sender, EventArgs e)
+        {
+            if (pause)
+                pause = false;
         }
     }
 }
