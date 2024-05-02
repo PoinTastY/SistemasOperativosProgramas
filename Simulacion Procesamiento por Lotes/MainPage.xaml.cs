@@ -357,6 +357,7 @@ TME: {proceso.TmeOriginal}
             EnableButtons(true);
             BtnError.IsEnabled = false;
             BtnInterrupt.IsEnabled = false;
+            BtnRerun.IsEnabled = true;
         }
 
         //lists tapping, basically dont do anything
