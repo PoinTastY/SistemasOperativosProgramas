@@ -212,7 +212,7 @@
                                         <DataTemplate>
                                             <ViewCell>
                                                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="15">
-                                                    <Label Text="{Binding Id, StringFormat='{0}- '}"/>
+                                                    <Label Text="{Binding Id, StringFormat='({0})'}"/>
                                                     <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
                                                     <Label Text="{Binding Resultado, StringFormat='Resultado: {0}'}"/>
                                                     <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>

@@ -97,10 +97,8 @@ namespace Simulacion_Procesamiento_por_Lotes
 
             //writing generated datos.txt
             string datos = $"-------------------------------------------------------\nCantidad de Procesos: {StepperTotalProcesos.Value} TME minimo: {StepperMinTme.Value} TME maximo: {StepperMaxTme.Value} Total de Procesos: {StepperTotalProcesos.Value}\n\n";
-            int cantidadlotes = 0;// pa imprimir que lote es
             foreach (var lote in lotes)
             {
-                datos += "Lote: " + ++cantidadlotes;
                 foreach (var proceso in lote.Procesos)
                 {
                     datos += @$"
@@ -152,14 +150,15 @@ TME: {proceso.TmeOriginal}
                         skip = false;
                         if (procesosBloqueados.Count != 0)
                         {
+                            lote.Add(procesosBloqueados[0]);
+                            procesosBloqueados.RemoveAt(0);
+                            chamba = lote.TakeFirst();//tomamos los procesos en orden
                             int i = 0;
                             foreach (Proceso proceso in lote.Procesos)//se llena la lista de pendientes (sin el primero que tomamos, xq se pasa directo a ejecucion)
                             {
                                 procesosPendientes.Add(proceso);
                                 lote.Procesos[i++].Espera++;
                             }
-                            chamba = procesosBloqueados[0];
-                            procesosBloqueados.RemoveAt(0);
                         }
                     }
                     
@@ -315,7 +314,7 @@ TME: {proceso.TmeOriginal}
             {
                 Directory.CreateDirectory(_path);
             }
-            string ruta = _path + @"\Datos.txt";
+            string ruta = _path + @"\Listos.txt";
             try
             {
                 using (StreamWriter writer = new StreamWriter(ruta, append : false))
@@ -503,7 +502,8 @@ TME: {proceso.TmeOriginal}
         private string GenLogTable(ObservableCollection<Proceso> data)
         {
             string tabla = "ID  Llegada  Finalizacion  Retorno  Respuesta  Espera  Bloqueado  Servicio\n";
-            foreach (Proceso proceso in data.OrderBy(p => p.Id))
+            List<Proceso> table = data.OrderBy(p => p.Id).ToList();
+            foreach (Proceso proceso in table)
             {
                 tabla += $"{MinSecConverter(proceso.Id),-4} {MinSecConverter(proceso.Llegada),-9} {MinSecConverter(proceso.Finalizacion),-13} {MinSecConverter(proceso.Retorno),-8} {MinSecConverter(proceso.Respuesta),-10} {MinSecConverter(proceso.Espera),-7} {MinSecConverter(proceso.Bloqueado),-10} {MinSecConverter(proceso.Servicio)}\n";
             }
