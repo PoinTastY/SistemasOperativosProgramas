@@ -50,7 +50,7 @@ namespace Simulacion_Procesamiento_por_Lotes
             InitializeComponent();
 
             //display and link data (not Relevant 4 teacher)
-            LabelSizeLote.Text = string.Format("Tamaño del lote: {0}", StepperSizeLote.Value);
+            //LabelSizeLote.Text = string.Format("Tamaño del lote: {0}", StepperSizeLote.Value); not used 4 dis one
             LabelMinTme.Text = string.Format("TME minimo: {0}", StepperMinTme.Value);
             LabelMaxTme.Text = string.Format("TME maximo: {0}", StepperMaxTme.Value);
             LabelTotalProcesos.Text = string.Format("Total de Procesos: {0}", StepperTotalProcesos.Value);
@@ -69,20 +69,20 @@ namespace Simulacion_Procesamiento_por_Lotes
             int tmetotal= 0;
 
             //initialize every lote needed basing on settings
-            lotes.Add(new Lote(((int)StepperSizeLote.Value)));
+            lotes.Add(new Lote(((int)StepperTotalProcesos.Value)));
             int indexLote = 0;
             for(int j = 0; j < StepperTotalProcesos.Value; j++)
             {
                 if(!lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(10)])))
                 {
                     indexLote ++;
-                    lotes.Add(new Lote((int)StepperSizeLote.Value));
+                    lotes.Add(new Lote((int)StepperTotalProcesos.Value));
                     lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(1)]));
                 }
             }
 
             //writing generated datos.txt
-            string datos = $"-------------------------------------------------------\nTamaño del lote: {StepperSizeLote.Value} TME minimo: {StepperMinTme.Value} TME maximo: {StepperMaxTme.Value} Total de Procesos: {StepperTotalProcesos.Value}\n\n";
+            string datos = $"-------------------------------------------------------\nCantidad de Procesos: {StepperTotalProcesos.Value} TME minimo: {StepperMinTme.Value} TME maximo: {StepperMaxTme.Value} Total de Procesos: {StepperTotalProcesos.Value}\n\n";
             int cantidadlotes = 0;// pa imprimir que lote es
             foreach (var lote in lotes)
             {
@@ -228,7 +228,7 @@ TME: {proceso.TmeOriginal}
         //Ejecutar
         private void BtnEjecutar_Clicked(object sender, EventArgs e)
         {
-            StepperSizeLote.IsEnabled = false;
+            //StepperSizeLote.IsEnabled = false;
             StepperMinTme.IsEnabled = false;
             StepperMaxTme.IsEnabled = false;
             StepperTotalProcesos.IsEnabled = false;
@@ -243,10 +243,10 @@ TME: {proceso.TmeOriginal}
         //Settings Steppers
 
         //size lote
-        private void StepperSizeLote_ValueChanged(object sender, ValueChangedEventArgs e)
-        {
-            LabelSizeLote.Text = string.Format("Tamaño del lote: {0}", e.NewValue);
-        }
+        //private void StepperSizeLote_ValueChanged(object sender, ValueChangedEventArgs e)
+        //{
+        //    LabelSizeLote.Text = string.Format("Tamaño del lote: {0}", e.NewValue);
+        //}
 
         //TME min
         private void StepperMinTme_ValueChanged(object sender, ValueChangedEventArgs e)
@@ -309,7 +309,7 @@ TME: {proceso.TmeOriginal}
         //Reiniciar btn
         private void BtnRerun_Clicked(object sender, EventArgs e)
         {
-            StepperSizeLote.IsEnabled = true;
+            //StepperSizeLote.IsEnabled = true;
             StepperMinTme.IsEnabled = true;
             StepperMaxTme.IsEnabled = true;
             StepperTotalProcesos.IsEnabled = true;

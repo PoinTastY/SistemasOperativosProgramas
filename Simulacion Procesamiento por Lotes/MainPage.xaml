@@ -13,13 +13,13 @@
             <Frame>
                 <ScrollView Orientation="Horizontal">
                     <HorizontalStackLayout Padding="15">
-                        <VerticalStackLayout Spacing="10" Padding="10">
+                        <!--<VerticalStackLayout Spacing="10" Padding="10">
                             <Label x:Name="LabelSizeLote"/>
                             <Stepper x:Name="StepperSizeLote"
                                      Value="5"
                                      ValueChanged="StepperSizeLote_ValueChanged"/>
 
-                        </VerticalStackLayout>
+                        </VerticalStackLayout>-->
                         <VerticalStackLayout Spacing="10" Padding="10">
                             <Label x:Name="LabelMinTme"/>
                             <Stepper x:Name="StepperMinTme"
@@ -80,7 +80,7 @@
                         
                                 </ListView>
                             </Frame>
-                            <Label x:Name="LblLotesFaltantes"/>
+                            <!--<Label x:Name="LblLotesFaltantes"/>-->
                         </VerticalStackLayout>
                     </Frame>
                     
@@ -111,24 +111,27 @@
 
                             </StackLayout>
                         </Frame>
-                        <VerticalStackLayout>
-                            <Label Text="Procesos Bloqueados :c"/>
-                            <ListView x:Name="ListBlocked"
-                                      MinimumHeightRequest="150"
-                                      MinimumWidthRequest="250">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <ViewCell>
-                                            <HorizontalStackLayout>
-                                                <Label Text="{Binding Id, StringFormat='{0}- '}"/>
-                                                <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
-                                                <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
-                                            </HorizontalStackLayout>
-                                        </ViewCell>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>  
-                            </ListView>
-                        </VerticalStackLayout>
+                        <Frame BackgroundColor="SteelBlue">
+                            <VerticalStackLayout BackgroundColor="Black">
+                                <Label Text="Procesos Bloqueados :c"/>
+                                <ListView x:Name="ListBlocked"
+                                          MinimumHeightRequest="150"
+                                          MinimumWidthRequest="250">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <ViewCell>
+                                                <HorizontalStackLayout>
+                                                    <Label Text="{Binding Id, StringFormat='{0}- '}"/>
+                                                    <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
+                                                    <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
+                                                </HorizontalStackLayout>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </VerticalStackLayout>
+                        </Frame>
+
                         <VerticalStackLayout VerticalOptions="EndAndExpand">
                             <Button Text="Generar Resultados"
                                     x:Name="BtnExportResults"
