@@ -1,5 +1,6 @@
 ﻿using Simulacion_Procesamiento_por_Lotes.Models;
 using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 
 namespace Simulacion_Procesamiento_por_Lotes
 {
@@ -15,7 +16,12 @@ namespace Simulacion_Procesamiento_por_Lotes
         private bool ticking = true;
         private bool interrupt = false;
         private bool error = false;
+        private bool skip = false;
+        private bool wait4Blocked = false;
+        private int nuevos;
+        private int nextLote;
         Proceso chamba;
+
 
         //Reloj
         private TimeOnly RelojGlobal = new();
@@ -24,9 +30,10 @@ namespace Simulacion_Procesamiento_por_Lotes
         private List<Lote> lotes = new();
 
         //observable collections
-        public ObservableCollection<ViewInfo> procesosTerminados = new();
-        public ObservableCollection<ViewInfo> procesosPendientes = new();
-        public ObservableCollection<ViewInfo> procesosBloqueados = new();
+        public ObservableCollection<Proceso> procesosTerminados = new();
+        public ObservableCollection<Proceso> procesosPendientes = new();
+        public ObservableCollection<Proceso> procesosBloqueados = new();
+        public ObservableCollection<Proceso> procesosNuevos = new();
 
         //programadores xd
         private List<string> programadores = new()
@@ -69,14 +76,14 @@ namespace Simulacion_Procesamiento_por_Lotes
             int tmetotal= 0;
 
             //initialize every lote needed basing on settings
-            lotes.Add(new Lote(((int)StepperTotalProcesos.Value)));
+            lotes.Add(new Lote(5));
             int indexLote = 0;
             for(int j = 0; j < StepperTotalProcesos.Value; j++)
             {
                 if(!lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(10)])))
                 {
                     indexLote ++;
-                    lotes.Add(new Lote((int)StepperTotalProcesos.Value));
+                    lotes.Add(new Lote(5));
                     lotes[indexLote].Add(new Proceso(j + 1, (int)StepperMinTme.Value, (int)StepperMaxTme.Value, programadores[Randomizer(1)]));
                 }
             }
@@ -104,32 +111,86 @@ TME: {proceso.TmeOriginal}
             ExportDatos(datos,tmetotal);
 
             //running the simulation
-            int totallotes = lotes.Count - 1;
-            int cuentalotes = 0;
-            LblLotesFaltantes.Text = "Lotes Faltantes: " + totallotes;
+            //int totallotes = lotes.Count - 1;
+            nuevos = ((int)(StepperTotalProcesos.Value - 5));
+            LblProcesosPendientes.Text = "Procesos Nuevos: " + nuevos;
+            nextLote = 1;
             foreach (var lote in lotes)
             {
-                resultados += $"Lote: {++cuentalotes}\n";
-                while (lote)
-                {
-                    chamba = lote.TakeFirst();//tomamos los procesos en orden
+                //resultados += $"Lote: {++cuentalotes}\n";
+                int x = 0;
+                foreach(Proceso process in lote.Procesos) {
+                    lote.Procesos[x++].Llegada = RelojGlobal.Second + (RelojGlobal.Minute * 60);
+                }
 
-                    foreach (Proceso proceso in lote.Procesos)//se llena la lista de pendientes (sin el primero que tomamos, xq se pasa directo a ejecucion)
+                while (lote || wait4Blocked)
+                {
+                    ListBlocked.ItemsSource = procesosBloqueados;
+
+                    if (!skip && lote)
                     {
-                        ViewInfo viewinfo = new(proceso.Id, proceso.Instruccion, proceso.Programador, proceso.Tme);//usamos nuestro objeto para data binding (para xaml)
-                        procesosPendientes.Add(viewinfo);
+                        chamba = lote.TakeFirst();//tomamos los procesos en orden
+                        int j = 0;
+                        foreach (Proceso proceso in lote.Procesos)//se llena la lista de pendientes (sin el primero que tomamos, xq se pasa directo a ejecucion)
+                        {
+                            procesosPendientes.Add(proceso);
+                            lote.Procesos[j++].Espera++;
+                        }
+                        if(procesosBloqueados.Count != 0)
+                            skip = true;
+
+                    }
+                    else 
+                    { 
+                        skip = false;
+                        if (procesosBloqueados.Count != 0)
+                        {
+                            int i = 0;
+                            foreach (Proceso proceso in lote.Procesos)//se llena la lista de pendientes (sin el primero que tomamos, xq se pasa directo a ejecucion)
+                            {
+                                procesosPendientes.Add(proceso);
+                                lote.Procesos[i++].Espera++;
+                            }
+                            chamba = procesosBloqueados[0];
+                            procesosBloqueados.RemoveAt(0);
+                        }
+                    }
+                    
+                    
+                    if(lotes.Count > 1)
+                    {
+                        if (lotes[nextLote] && procesosBloqueados.Count + procesosPendientes.Count < 5)
+                        {
+                            //si la memoria esta disponible, tomamos un proceso de los siguientes
+                            if (lotes[nextLote])
+                            {
+                                lote.Add(lotes[nextLote].TakeFirst());
+                                lote.Procesos.Last().Llegada = RelojGlobal.Second + (RelojGlobal.Minute * 60);
+                            }
+                        }
                     }
                     do
                     {
+                        
+                        ListBlocked.ItemsSource = procesosBloqueados;
                         //si la chamba sigue siendo valida, se mantiene en ejecucion(valida if tme >= 0)
+                        //logs
+                        if (chamba.Respuesta == 0)
+                            chamba.Respuesta = RelojGlobal.Second + (RelojGlobal.Minute * 60);
+
+
+
                         if (chamba.Tme >= 0 && ticking)
+                        {
                             Ejecucion(chamba);
+                            chamba.Servicio += 1;
+                        }
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
                         if(interrupt)
                         {
-                            chamba.TmeOriginal = chamba.Tme;
-                            lote.Add(chamba);
+                            if(chamba.Tme != 0)
+                                procesosBloqueados.Add(chamba);
                             interrupt = false;
                             break;
                         }
@@ -140,35 +201,70 @@ TME: {proceso.TmeOriginal}
 {chamba.Instruccion} !ERROR
 ";
                             error = false;
-                            ViewInfo viewinfo = new(chamba.Id, chamba.Instruccion + " !ERROR", chamba.Programador, chamba.TmeOriginal);
-                            procesosBloqueados.Add(viewinfo);
+                            chamba.Resultado = "ERROR";
+                            procesosTerminados.Add(chamba);
+                            if (nuevos != 0)
+                                LblProcesosPendientes.Text = "Procesos Nuevos: " + --nuevos;
+                            chamba.Finalizacion = RelojGlobal.Second + (RelojGlobal.Minute * 60);
                             break;
                         }
-                    } while (chamba.Tme > 0 && ticking);//recuerda, ticking puede tronar el proceso si queremos, si no, hasta que yano haya chamba
+                        ListBlocked.ItemsSource = null;
+                        if (procesosBloqueados.Count != 0)
+                        {
+                            int f = 0;
+                            foreach (var pro in procesosBloqueados)
+                            {
+                                procesosBloqueados[f].Bloqueado++;
+                                procesosBloqueados[f++].Espera++;
+                            }
+                        }
 
-                        if (!ticking)//si abortamos, pasa aqui y termina run();
-                            return;
-                    if(chamba.Tme == 0) 
+                    } while (chamba.Tme > 0 && ticking);//recuerda, ticking puede tronar el proceso si queremos, si no, hasta que yano haya chamba
+                    //log
+                    chamba.Finalizacion = RelojGlobal.Second + (RelojGlobal.Minute * 60);
+
+                    if (!lote && procesosBloqueados.Count !=0)
+                    {
+                        //int y = 0;
+                        //foreach(var pro in procesosBloqueados)
+                        //{
+                        //    procesosBloqueados[y].Bloqueado++;
+                        //    procesosBloqueados[y++].Espera++;
+                        //}
+                        wait4Blocked = true;
+                    }
+                    else
+                    {
+                        int n = 0;
+                        foreach (var pro in procesosBloqueados)
+                        {
+                            procesosBloqueados[n].Bloqueado++;
+                            procesosBloqueados[n++].Espera++;
+                        }
+                        wait4Blocked = false;
+                    }
+
+
+                    if (!ticking)//si abortamos, pasa aqui y termina run();
+                        return;
+
+                    if(chamba.Tme == 0)
+                    {
+                        chamba.Retorno = RelojGlobal.Second + (RelojGlobal.Minute * 60);
                         Finalizados(chamba);//SI UNA Chamba termina, sale del while, y lo arrojamos a la lista de terminados
+                    }
                     procesosPendientes.Clear();//se limpian los procesos pendientes para actulaizar la vista de los elmentos de nuevo al ciclar
-                    
+                    ListBlocked.ItemsSource = null;
                 }//cuando termina el lote, sale de while y vamos al siguiente
-                if(totallotes != 0)
-                {
-                    LblLotesFaltantes.Text = "Lotes Faltantes: " + --totallotes;
-                }
-                else
-                {//seccion de ejecucion vacia
-                 //el segundo que falta, al cerrar el ultimo proceso, actualizamos el final del cronometro
-                    LblRelojGlobal.Text = $"Reloj Global: {RelojGlobal.Minute}:{RelojGlobal.Second:00}";
-                    LblId.Text = "-";
-                    LblInstruccion.Text = "-";
-                    LblProgramador.Text = "-";
-                    LblTME.Text = "-";
-                }
+                nextLote++;
             }
             lotes.Clear();//al terminar, limpiamos el changarro, terminamos la variable de resultados, y estamos listos para exportar los resultados, cuando el usuario quiera
             resultados += $"\n\nTiempo total de ejecucion: {RelojGlobal.Minute}:{RelojGlobal.Second:00}\n";
+            LblRelojGlobal.Text = $"Reloj Global: {RelojGlobal.Minute}:{RelojGlobal.Second:00}";
+            LblId.Text = "-";
+            LblInstruccion.Text = "-";
+            LblProgramador.Text = "-";
+            LblTME.Text = "-";
             BtnStop.IsEnabled = false;
             EnableButtons(true);
             BtnError.IsEnabled = false;
@@ -184,7 +280,7 @@ TME: {proceso.TmeOriginal}
             LblInstruccion.Text = "Instruccion: " + chamba.Instruccion;
             LblProgramador.Text = "Programador: " + chamba.Programador;
             chamba.Tme--;
-            LblTME.Text = "TME restante: " + chamba.Tme.ToString();
+            LblTME.Text = "TME restante: " + chamba.Tme.ToString() + "/" + chamba.TmeOriginal.ToString();
 
             if (chamba.Tme == 0)//si se termina la chamba, se manda a la variable que guarda los resultados
                 resultados += @$"
@@ -195,8 +291,9 @@ TME: {proceso.TmeOriginal}
 
         private void Finalizados(Proceso chamba)//cuando se termina una chamba, traemos la chamba finalizada aqui
         {
-            ViewInfo viewinfo = new(chamba.Id, chamba.Instruccion, chamba.Programador, chamba.TmeOriginal);
-            procesosTerminados.Add(viewinfo);
+            procesosTerminados.Add(chamba);
+            if(nuevos != 0)
+                LblProcesosPendientes.Text = "Procesos Nuevos: " + --nuevos;
         }
 
 
@@ -210,7 +307,7 @@ TME: {proceso.TmeOriginal}
             string ruta = _path + @"\Datos.txt";
             try
             {
-                using (StreamWriter writer = new StreamWriter(ruta, append : true))
+                using (StreamWriter writer = new StreamWriter(ruta, append : false))
                 {
                     // Se escribe el contenido en el archivo
                     writer.WriteLine($"\n" + dato + "-------------------------------------------------------------------------\n" + "TME total: " + tme);
@@ -290,10 +387,16 @@ TME: {proceso.TmeOriginal}
             string ruta = _path + @"\Resultados.txt";
             try
             {
-                using (StreamWriter writer = new StreamWriter(ruta, append: true))
+                using (StreamWriter writer = new StreamWriter(ruta, append: false))
                 {
                     // Se escribe el contenido en el archivo
                     writer.WriteLine($"---------------------------------------------------------------------------\n" + resultados + "\n----------------------------------------------------------");
+                    //List<Proceso> procesos = new();
+                    //foreach(Proceso pro in procesosTerminados)
+                    //{
+                    //    procesos.Add(pro);
+                    //}
+                    writer.WriteLine(GenLogTable(procesosTerminados));
                 }
 
                 await DisplayAlert("Exito", "Se han exportado los Resultados.", "Ok");
@@ -384,6 +487,16 @@ TME: {proceso.TmeOriginal}
             chamba.Resultado = null;
             error = true;
 
+        }
+
+        private string GenLogTable(ObservableCollection<Proceso> data)
+        {
+            string tabla = "ID  Llegada  Finalizacion  Retorno  Respuesta  Espera  Bloqueado  Servicio\n";
+            foreach (Proceso proceso in data.OrderBy(p => p.Id))
+            {
+                tabla += $"{proceso.Id,-4} {proceso.Llegada,-9} {proceso.Finalizacion,-13} {proceso.Retorno,-8} {proceso.Respuesta,-10} {proceso.Espera,-7} {proceso.Bloqueado,-10} {proceso.Servicio}\n";
+            }
+            return tabla;
         }
     }
 }

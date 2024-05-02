@@ -49,7 +49,7 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
         //overload to validate if lote is empty
         public static implicit operator bool(Lote lote)
         {
-            return lote._procesosActuales != 0;
+            return lote._procesosActuales > 0;
         }
 
     }

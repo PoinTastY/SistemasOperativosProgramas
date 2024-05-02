@@ -23,7 +23,7 @@
                         <VerticalStackLayout Spacing="10" Padding="10">
                             <Label x:Name="LabelMinTme"/>
                             <Stepper x:Name="StepperMinTme"
-                                     Value="5"
+                                     Value="1"
                                      ValueChanged="StepperMinTme_ValueChanged"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Spacing="10" Padding="10">
@@ -80,7 +80,7 @@
                         
                                 </ListView>
                             </Frame>
-                            <!--<Label x:Name="LblLotesFaltantes"/>-->
+                            <Label x:Name="LblProcesosPendientes"/>
                         </VerticalStackLayout>
                     </Frame>
                     
@@ -122,8 +122,7 @@
                                             <ViewCell>
                                                 <HorizontalStackLayout>
                                                     <Label Text="{Binding Id, StringFormat='{0}- '}"/>
-                                                    <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
-                                                    <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
+                                                    <Label Text="{Binding Bloqueado, StringFormat='Bloqueado por: {0}'}"/>
                                                 </HorizontalStackLayout>
                                             </ViewCell>
                                         </DataTemplate>
@@ -162,8 +161,9 @@
                                                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="15">
                                                     <Label Text="{Binding Id, StringFormat='{0}- '}"/>
                                                     <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
+                                                    <Label Text="{Binding Resultado, StringFormat='Resultado: {0}'}"/>
                                                     <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
-                                                    <Label Text="{Binding Tme, StringFormat='TME: {0}'}"/>
+                                                    <Label Text="{Binding TmeOriginal, StringFormat='TME: {0}'}"/>
 
                                                 </VerticalStackLayout>
                                             </ViewCell>
