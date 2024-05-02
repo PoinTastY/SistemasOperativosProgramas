@@ -26,6 +26,7 @@ namespace Simulacion_Procesamiento_por_Lotes
         //observable collections
         public ObservableCollection<ViewInfo> procesosTerminados = new();
         public ObservableCollection<ViewInfo> procesosPendientes = new();
+        public ObservableCollection<ViewInfo> procesosBloqueados = new();
 
         //programadores xd
         private List<string> programadores = new()
@@ -55,6 +56,7 @@ namespace Simulacion_Procesamiento_por_Lotes
             LabelTotalProcesos.Text = string.Format("Total de Procesos: {0}", StepperTotalProcesos.Value);
             ListPendings.ItemsSource = procesosPendientes;
             ListFinished.ItemsSource = procesosTerminados;
+            ListBlocked.ItemsSource = procesosBloqueados;
             
         }
 
@@ -139,7 +141,7 @@ TME: {proceso.TmeOriginal}
 ";
                             error = false;
                             ViewInfo viewinfo = new(chamba.Id, chamba.Instruccion + " !ERROR", chamba.Programador, chamba.TmeOriginal);
-                            procesosTerminados.Add(viewinfo);
+                            procesosBloqueados.Add(viewinfo);
                             break;
                         }
                     } while (chamba.Tme > 0 && ticking);//recuerda, ticking puede tronar el proceso si queremos, si no, hasta que yano haya chamba

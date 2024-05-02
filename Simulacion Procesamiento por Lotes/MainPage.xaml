@@ -100,7 +100,7 @@
                         <Frame VerticalOptions="Center" BackgroundColor="DarkSeaGreen" MinimumHeightRequest="225">
                             <StackLayout>
                                 <Label Text="Ejecutando:"/>
-                                <Frame>
+                                <Frame MinimumHeightRequest="125">
                                     <StackLayout>
                                         <Label x:Name="LblId"/>
                                         <Label x:Name="LblInstruccion"/>
@@ -112,12 +112,15 @@
                             </StackLayout>
                         </Frame>
                         <VerticalStackLayout>
-                            <ListView>
+                            <Label Text="Procesos Bloqueados :c"/>
+                            <ListView x:Name="ListBlocked"
+                                      MinimumHeightRequest="150"
+                                      MinimumWidthRequest="250">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <ViewCell>
                                             <HorizontalStackLayout>
-                                                <Label Text="{Binding Id, StringFormat='Proceso: {0}'}"/>
+                                                <Label Text="{Binding Id, StringFormat='{0}- '}"/>
                                                 <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
                                                 <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
                                             </HorizontalStackLayout>
@@ -148,12 +151,13 @@
                                           HorizontalOptions="FillAndExpand"
                                           MaximumHeightRequest="300"
                                           MinimumHeightRequest="300"
-                                          MinimumWidthRequest="250">
+                                          MinimumWidthRequest="250"
+                                          MaximumWidthRequest="250">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <ViewCell>
                                                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="15">
-                                                    <Label Text="{Binding Id, StringFormat='Proceso: {0}'}"/>
+                                                    <Label Text="{Binding Id, StringFormat='{0}- '}"/>
                                                     <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
                                                     <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
                                                     <Label Text="{Binding Tme, StringFormat='TME: {0}'}"/>
