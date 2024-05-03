@@ -43,6 +43,11 @@
 
         //how much time in bloqueado
         public int Bloqueado { get => _bloquado; set => _bloquado = value; }
+        public string CombinedTme
+        {
+            get { return $"tme: {Tme}/{TmeOriginal}"; }
+        }
+
 
 
         public int Llegada { get; set; } = 0;

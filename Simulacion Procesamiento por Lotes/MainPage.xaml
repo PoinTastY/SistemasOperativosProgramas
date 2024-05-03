@@ -73,7 +73,7 @@
                                                     <Label Text="{Binding Id, StringFormat='Proceso: {0}'}"/>
                                                     <Label Text="{Binding Instruccion, StringFormat='Instruccion: {0}'}"/>
                                                     <Label Text="{Binding Programador, StringFormat='Programador: {0}'}"/>
-                                                    <Label Text="{Binding Tme, StringFormat='TME: {0}'}"/>
+                                                    <Label Text="{Binding CombinedTme}"/>
                                                 </VerticalStackLayout>
                                             </ViewCell>
                                         </DataTemplate>
