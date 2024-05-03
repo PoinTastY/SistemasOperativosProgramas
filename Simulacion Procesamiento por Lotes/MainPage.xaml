@@ -165,7 +165,7 @@
                             </FlyoutBase.ContextFlyout>
                         </Frame>
                         <Frame BackgroundColor="SteelBlue">
-                            <VerticalStackLayout BackgroundColor="Black">
+                            <VerticalStackLayout>
                                 <Label Text="Procesos Bloqueados :c"/>
                                 <ListView x:Name="ListBlocked"
                                           MinimumHeightRequest="150"
