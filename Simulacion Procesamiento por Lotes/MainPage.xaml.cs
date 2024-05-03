@@ -22,6 +22,7 @@ namespace Simulacion_Procesamiento_por_Lotes
         private bool pause = false;
         private int nuevos;
         private int nextLote;
+        private int cuantum;
         Proceso chamba;
         
 
@@ -120,6 +121,7 @@ TME: {proceso.TmeOriginal}
             nuevos = ((int)(StepperTotalProcesos.Value - 5));
             LblProcesosPendientes.Text = "Procesos Nuevos: " + nuevos;
             nextLote = 1;
+            cuantum = 0;
             foreach (var lote in lotes)
             {
                 //resultados += $"Lote: {++cuentalotes}\n";
@@ -189,17 +191,23 @@ TME: {proceso.TmeOriginal}
                         {
                             Ejecucion(chamba);
                             chamba.Servicio += 1;
+                            cuantum++;
                         }
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         while (pause)
                             await Task.Delay(100);
                         RelojGlobal = RelojGlobal.Add(TimeSpan.FromSeconds(1));
-
-                        if(interrupt)
+                        int h = 0;
+                        foreach (var work in lote.Procesos)
+                        {
+                            lote.Procesos[h++].Espera++;
+                        }
+                        if (interrupt)
                         {
                             if(chamba.Tme != 0)
                                 procesosBloqueados.Add(chamba);
                             interrupt = false;
+                            cuantum = 0;
                             break;
                         }
                         if(error)
@@ -215,6 +223,7 @@ TME: {proceso.TmeOriginal}
                                 LblProcesosPendientes.Text = "Procesos Nuevos: " + --nuevos;
                             chamba.Finalizacion = RelojGlobal.Second + (RelojGlobal.Minute * 60);
                             chamba.Retorno = RelojGlobal.Second + (RelojGlobal.Minute * 60);
+                            cuantum = 0;
 
                             break;
                         }
@@ -229,7 +238,7 @@ TME: {proceso.TmeOriginal}
                             }
                         }
 
-                    } while (chamba.Tme > 0 && ticking);//recuerda, ticking puede tronar el proceso si queremos, si no, hasta que yano haya chamba
+                    } while (chamba.Tme > 0 && ticking && cuantum != 5);//recuerda, ticking puede tronar el proceso si queremos, si no, hasta que yano haya chamba
                     //log
                     chamba.Finalizacion = RelojGlobal.Second + (RelojGlobal.Minute * 60);
 
@@ -263,6 +272,14 @@ TME: {proceso.TmeOriginal}
                         chamba.Retorno = RelojGlobal.Second + (RelojGlobal.Minute * 60);
                         Finalizados(chamba);//SI UNA Chamba termina, sale del while, y lo arrojamos a la lista de terminados
                     }
+                    else
+                    {
+                        if (!lote.Add(chamba))
+                            lote.Overflow(chamba);
+                        
+                    }
+                    cuantum = 0;
+
                     procesosPendientes.Clear();//se limpian los procesos pendientes para actulaizar la vista de los elmentos de nuevo al ciclar
                     ListBlocked.ItemsSource = null;
                 }//cuando termina el lote, sale de while y vamos al siguiente
@@ -502,7 +519,7 @@ TME: {proceso.TmeOriginal}
         private string GenLogTable(ObservableCollection<Proceso> data)
         {
             string tabla = "ID  Llegada  Finalizacion  Retorno  Respuesta  Espera  Bloqueado  Servicio\n";
-            List<Proceso> table = data.OrderBy(p => p.Id).ToList();
+            List<Proceso> table = data.ToList();
             foreach (Proceso proceso in table)
             {
                 tabla += $"{MinSecConverter(proceso.Id),-4} {MinSecConverter(proceso.Llegada),-9} {MinSecConverter(proceso.Finalizacion),-13} {MinSecConverter(proceso.Retorno),-8} {MinSecConverter(proceso.Respuesta),-10} {MinSecConverter(proceso.Espera),-7} {MinSecConverter(proceso.Bloqueado),-10} {MinSecConverter(proceso.Servicio)}\n";

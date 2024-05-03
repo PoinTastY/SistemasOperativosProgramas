@@ -5,7 +5,7 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
     public partial class Lote
     {
         //attributes
-        private readonly int _capacidadMax;
+        private int _capacidadMax;
         private int _procesosActuales;
         private ObservableCollection<Proceso> _procesos;
 
@@ -30,6 +30,13 @@ namespace Simulacion_Procesamiento_por_Lotes.Models
             {
                 return false;
             }
+        }
+
+        public void Overflow(Proceso proceso)
+        {
+            _capacidadMax++;
+            _procesosActuales++;
+            Procesos.Add(proceso);
         }
 
         //take first proceso

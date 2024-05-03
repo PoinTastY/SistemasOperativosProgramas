@@ -25,7 +25,7 @@
                         <VerticalStackLayout Spacing="10" Padding="10">
                             <Label x:Name="LabelMinTme"/>
                             <Stepper x:Name="StepperMinTme"
-                                     Value="1"
+                                     Value="5"
                                      ValueChanged="StepperMinTme_ValueChanged"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Spacing="10" Padding="10">
